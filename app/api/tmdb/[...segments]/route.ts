@@ -38,7 +38,11 @@ function mapSegmentsToPath(segments: string[], searchParams: URLSearchParams): s
   }
 }
 
-export async function GET(request: Request, { params }: { params: { segments: string[] } }) {
+export async function GET(
+  request: Request,
+  context: { params: Promise<{ segments: string[] }> }
+) {
+  const params = await context.params;
   if (!TMDB_API_KEY) {
     return NextResponse.json({ error: "TMDB API key missing" }, { status: 500 });
   }
@@ -51,6 +55,9 @@ export async function GET(request: Request, { params }: { params: { segments: st
   }
 
   const url = new URL(`${TMDB_BASE_URL}/${path}`);
+
+  // `window` is only used internally for mapping
+  searchParams.delete("window");
 
   searchParams.forEach((value, key) => {
     url.searchParams.set(key, value);
