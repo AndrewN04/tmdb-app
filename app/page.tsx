@@ -1,65 +1,89 @@
 import Image from "next/image";
+import Link from "next/link";
+import { Flame, Play } from "lucide-react";
 
-export default function Home() {
+import {
+  MovieSummary,
+  getPopularMovies,
+  getTrendingMovies,
+  getUpcomingMovies,
+  posterUrl,
+} from "@/lib/tmdb";
+import { SectionHeading } from "@/components/section-heading";
+import { MovieGrid } from "@/components/movie-grid";
+
+export const revalidate = 300;
+
+function Hero({ feature }: { feature: MovieSummary }) {
+  const backdrop = posterUrl(feature.backdrop_path ?? feature.poster_path, "w780");
+  const title = feature.title ?? feature.name ?? "Featured";
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
+    <section className="relative overflow-hidden rounded-3xl border border-white/5 bg-white/5 p-10">
+      {backdrop && (
         <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
+          src={backdrop}
+          alt={title}
+          fill
           priority
+          className="absolute inset-0 h-full w-full object-cover opacity-30"
+          sizes="100vw"
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+      )}
+      <div className="relative flex flex-col gap-6">
+        <div className="flex items-center gap-3 text-sm text-white/80">
+          <Flame className="h-5 w-5 text-orange-400" /> Trending today
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+        <h1 className="text-4xl font-bold md:text-5xl">{title}</h1>
+        <p className="max-w-2xl text-white/80">
+          {feature.overview || "A trending movie curated from TMDB"}
+        </p>
+        <div className="flex flex-wrap gap-4">
+          <Link
+            href={`/movie/${feature.id}`}
+            className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 font-semibold text-black"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            <Play className="h-5 w-5" /> View details
+          </Link>
+          <Link
+            href="/browse"
+            className="inline-flex items-center gap-2 rounded-full border border-white/40 px-6 py-3 text-white"
           >
-            Documentation
-          </a>
+            Browse catalog
+          </Link>
         </div>
-      </main>
+      </div>
+    </section>
+  );
+}
+
+export default async function Home() {
+  const [popular, trending, upcoming] = await Promise.all([
+    getPopularMovies(),
+    getTrendingMovies(),
+    getUpcomingMovies(),
+  ]);
+
+  const feature = trending.results[0] ?? popular.results[0];
+
+  return (
+    <div className="space-y-12">
+      {feature && <Hero feature={feature} />}
+
+      <section className="space-y-4">
+        <SectionHeading title="Popular now" description="Community favorites pulled live from TMDB" />
+        <MovieGrid items={popular.results.slice(0, 10)} />
+      </section>
+
+      <section className="space-y-4">
+        <SectionHeading title="Trending" description="What everyone is watching today" />
+        <MovieGrid items={trending.results.slice(0, 10)} />
+      </section>
+
+      <section className="space-y-4">
+        <SectionHeading title="Upcoming" description="Films headed to theaters soon" />
+        <MovieGrid items={upcoming.results.slice(0, 10)} />
+      </section>
     </div>
   );
 }
