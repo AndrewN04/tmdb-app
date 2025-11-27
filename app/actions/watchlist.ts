@@ -7,6 +7,8 @@ import type { User as SupabaseUser } from "@supabase/supabase-js";
 import { prisma } from "@/lib/prisma";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
+// Server actions that keep Supabase auth, Prisma persistence, and ISR revalidation in sync for watchlists.
+
 const MAX_NOTES_LENGTH = 2000;
 
 interface BaseWatchlistInput {
@@ -55,6 +57,7 @@ function sanitizeCategories(categories?: string[] | null) {
     .slice(0, 12); // avoid runaway arrays
 }
 
+// Ensures the caller is authenticated before mutating the watchlist.
 async function requireSupabaseUser(): Promise<SupabaseUser> {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase.auth.getUser();
@@ -70,6 +73,7 @@ async function requireSupabaseUser(): Promise<SupabaseUser> {
   return data.user;
 }
 
+// Prisma schema expects a User row; keep it mirrored with Supabase auth metadata.
 async function syncUserRecord(user: SupabaseUser) {
   await prisma.user.upsert({
     where: { id: user.id },
@@ -83,6 +87,7 @@ async function syncUserRecord(user: SupabaseUser) {
   });
 }
 
+// Bust relevant ISR caches so lists/detail pages reflect the latest mutation.
 function revalidateWatchlistViews(tmdbId: number) {
   revalidatePath("/profile");
   revalidatePath(`/movie/${tmdbId}`);

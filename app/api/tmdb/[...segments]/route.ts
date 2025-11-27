@@ -11,6 +11,7 @@ function isV4Token(key: string) {
   return key.startsWith("eyJ");
 }
 
+// Translate user-friendly catch-all segments into concrete TMDB REST paths.
 function mapSegmentsToPath(segments: string[], searchParams: URLSearchParams): string | null {
   if (segments.length === 0) {
     return null;

@@ -2,6 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 
 let cachedAdminClient: ReturnType<typeof createClient> | null = null;
 
+// Centralizes privileged access (service role) for background jobs or setup scripts.
 export function getSupabaseAdminClient() {
   if (cachedAdminClient) {
     return cachedAdminClient;

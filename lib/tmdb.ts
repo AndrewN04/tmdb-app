@@ -4,6 +4,7 @@ import { getBaseUrl } from "./http";
 
 export const TMDB_IMAGE_BASE = "https://image.tmdb.org/t/p";
 
+// Calls the internal API proxy so Next.js caching and auth headers stay consistent across requests.
 async function fetchFromRoute<T>(path: string, searchParams?: Record<string, string>) {
   const baseUrl = getBaseUrl();
   const url = new URL(path, baseUrl);

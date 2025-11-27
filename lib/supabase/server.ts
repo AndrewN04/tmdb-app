@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 
+// Wraps cookie wiring so every server action/page shares the same Supabase session semantics.
 export async function createSupabaseServerClient() {
   const cookieStore = await cookies();
 
