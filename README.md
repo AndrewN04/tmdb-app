@@ -1,5 +1,15 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Environment
+
+Create a `.env` file based on the provided template and configure the Supabase keys using the new naming scheme:
+
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+- `SUPABASE_SECRET_KEY`
+
+The publishable key replaces the old `anon` key, and the secret key replaces the service-role key. Never expose the secret key to the browser.
+
 ## Getting Started
 
 First, run the development server:

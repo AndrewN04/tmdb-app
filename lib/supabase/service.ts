@@ -8,12 +8,12 @@ export function getSupabaseAdminClient() {
   }
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const supabaseSecretKey = process.env.SUPABASE_SECRET_KEY;
 
-  if (!supabaseUrl || !serviceRoleKey) {
-    throw new Error("Supabase admin environment variables are missing");
+  if (!supabaseUrl || !supabaseSecretKey) {
+    throw new Error("Supabase secret key is missing");
   }
 
-  cachedAdminClient = createClient(supabaseUrl, serviceRoleKey);
+  cachedAdminClient = createClient(supabaseUrl, supabaseSecretKey);
   return cachedAdminClient;
 }
