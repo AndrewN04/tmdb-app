@@ -15,13 +15,13 @@ Create a `.env` and supply the Supabase + TMDB secrets:
 
 ```
 NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
-SUPABASE_SECRET_KEY=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
 DATABASE_URL=
 TMDB_API_KEY=
 ```
 
-Publishable keys stay client-side; the secret key and database URL are server-only.
+The anon key stays client-side; the service-role key and database URL are server-only and power the privileged server actions.
 
 ## Development
 

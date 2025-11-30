@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Nebula Watchlist",
+  title: "TMDB Watchlist",
   description: "Browse TMDB movies, track your watchlist, and sync with Supabase Auth.",
 };
 
@@ -30,7 +30,7 @@ export default function RootLayout({
           <header className="border-b border-white/10 bg-slate-950/80 backdrop-blur">
             <nav className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4">
               <Link href="/" className="text-xl font-semibold tracking-tight">
-                Nebula
+                TMDB
               </Link>
               <div className="flex items-center gap-4 text-sm text-white/80">
                 <Link href="/browse" className="hover:text-white">
@@ -46,7 +46,6 @@ export default function RootLayout({
           <footer className="border-t border-white/5 bg-black/40 py-6">
             <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 text-xs text-white/60">
               <span>Powered by TMDB • Supabase Auth • Prisma</span>
-              <span>© {new Date().getFullYear()} Nebula Labs</span>
             </div>
           </footer>
         </div>

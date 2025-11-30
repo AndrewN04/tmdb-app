@@ -6,22 +6,23 @@ export async function createSupabaseServerClient() {
   const cookieStore = await cookies();
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabasePublishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+  const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY; // server-only
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const supabaseKey = supabaseServiceRoleKey ?? supabaseAnonKey; // prefer service role when available
 
-  if (!supabaseUrl || !supabasePublishableKey) {
-    throw new Error("Supabase publishable key is missing");
+  if (!supabaseUrl || !supabaseKey) {
+    throw new Error("Supabase credentials are missing");
   }
 
-  return createServerClient(supabaseUrl, supabasePublishableKey, {
+  return createServerClient(supabaseUrl, supabaseKey, {
     cookies: {
-      get(name) {
-        return cookieStore.get(name)?.value;
+      getAll() {
+        return cookieStore.getAll();
       },
-      set(name, value, options) {
-        cookieStore.set({ name, value, ...options });
-      },
-      remove(name, options) {
-        cookieStore.set({ name, value: "", ...options, maxAge: 0 });
+      setAll(cookiesToSet) {
+        cookiesToSet.forEach(({ name, value, options }) => {
+          cookieStore.set(name, value, options);
+        });
       },
     },
   });

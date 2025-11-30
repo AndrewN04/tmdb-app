@@ -1,32 +1,8 @@
 import "server-only";
 
-import { getBaseUrl } from "./http";
+import { fetchTmdb } from "@/lib/tmdb/fetcher";
 
 export const TMDB_IMAGE_BASE = "https://image.tmdb.org/t/p";
-
-// Calls the internal API proxy so Next.js caching and auth headers stay consistent across requests.
-async function fetchFromRoute<T>(path: string, searchParams?: Record<string, string>) {
-  const baseUrl = getBaseUrl();
-  const url = new URL(path, baseUrl);
-
-  if (searchParams) {
-    Object.entries(searchParams).forEach(([key, value]) => {
-      if (value) {
-        url.searchParams.set(key, value);
-      }
-    });
-  }
-
-  const res = await fetch(url.toString(), {
-    next: { revalidate: 60 },
-  });
-
-  if (!res.ok) {
-    throw new Error(`TMDB request failed: ${res.status}`);
-  }
-
-  return (await res.json()) as T;
-}
 
 export interface MovieSummary {
   id: number;
@@ -57,27 +33,27 @@ export interface MovieDetail extends MovieSummary {
 }
 
 export async function getPopularMovies(page = "1") {
-  return fetchFromRoute<MovieListResponse>("/api/tmdb/popular", { page });
+  return fetchTmdb<MovieListResponse>("movie/popular", { searchParams: { page } });
 }
 
 export async function getTrendingMovies(window = "day") {
-  return fetchFromRoute<MovieListResponse>("/api/tmdb/trending", { window });
+  return fetchTmdb<MovieListResponse>(`trending/movie/${window}`);
 }
 
 export async function getTopRatedMovies(page = "1") {
-  return fetchFromRoute<MovieListResponse>("/api/tmdb/top-rated", { page });
+  return fetchTmdb<MovieListResponse>("movie/top_rated", { searchParams: { page } });
 }
 
 export async function getUpcomingMovies(page = "1") {
-  return fetchFromRoute<MovieListResponse>("/api/tmdb/upcoming", { page });
+  return fetchTmdb<MovieListResponse>("movie/upcoming", { searchParams: { page } });
 }
 
 export async function getMovieDetails(id: string) {
-  return fetchFromRoute<MovieDetail>(`/api/tmdb/movie/${id}`);
+  return fetchTmdb<MovieDetail>(`movie/${id}`);
 }
 
 export async function getMovieRecommendations(id: string) {
-  return fetchFromRoute<MovieListResponse>(`/api/tmdb/movie/${id}/recommendations`);
+  return fetchTmdb<MovieListResponse>(`movie/${id}/recommendations`);
 }
 
 export function formatYear(movie: MovieSummary) {
@@ -86,7 +62,10 @@ export function formatYear(movie: MovieSummary) {
   return new Date(raw).getFullYear().toString();
 }
 
-export function posterUrl(path: string | null, size: "w185" | "w342" | "w500" | "original" = "w342") {
+export function posterUrl(
+  path: string | null,
+  size: "w185" | "w342" | "w500" | "w780" | "original" = "w342"
+) {
   if (!path) return null;
   return `${TMDB_IMAGE_BASE}/${size}${path}`;
 }

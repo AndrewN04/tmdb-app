@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { Prisma } from "@prisma/client";
-import type { User as SupabaseUser } from "@supabase/supabase-js";
+import type { AuthError, User as SupabaseUser } from "@supabase/supabase-js";
 
 import { prisma } from "@/lib/prisma";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -14,6 +14,22 @@ const MAX_NOTES_LENGTH = 2000;
 interface BaseWatchlistInput {
   tmdbId: number | string;
 }
+
+export interface WatchlistStatusResult {
+  user: {
+    id: string;
+    email: string | null;
+  } | null;
+  item:
+    | {
+        favorite: boolean;
+        notes: string | null;
+        categories: string[];
+      }
+    | null;
+}
+
+  const EMPTY_STATUS: WatchlistStatusResult = { user: null, item: null };
 
 export interface WatchlistUpsertInput extends BaseWatchlistInput {
   title: string;
@@ -186,4 +202,82 @@ export async function removeWatchlistItem(input: BaseWatchlistInput) {
 
   revalidateWatchlistViews(tmdbId);
   return { success: true };
+}
+
+export async function getWatchlistStatus(input: BaseWatchlistInput): Promise<WatchlistStatusResult> {
+  try {
+    const supabase = await createSupabaseServerClient();
+    const { data, error } = await supabase.auth.getUser();
+
+    if (error) {
+      if (isRecoverableAuthError(error)) {
+        console.warn("[watchlist] Unable to read Supabase session", error);
+        return EMPTY_STATUS;
+      }
+
+      throw new Error(error.message);
+    }
+
+    if (!data.user) {
+      return EMPTY_STATUS;
+    }
+
+    const tmdbId = coerceTmdbId(input.tmdbId);
+    const record = await prisma.watchlistItem.findUnique({
+      where: {
+        userId_tmdbId: {
+          userId: data.user.id,
+          tmdbId,
+        },
+      },
+    });
+
+    return {
+      user: {
+        id: data.user.id,
+        email: data.user.email ?? null,
+      },
+      item: record
+        ? {
+            favorite: Boolean(record.favorite),
+            notes: record.notes ?? null,
+            categories: record.categories ?? [],
+          }
+        : null,
+    };
+  } catch (error) {
+    if (isRecoverableNetworkError(error)) {
+      console.warn("[watchlist] Supabase auth request failed", error);
+      return EMPTY_STATUS;
+    }
+
+    throw error;
+  }
+}
+
+function isRecoverableAuthError(error: AuthError) {
+  return (error.status ?? 0) >= 500 || /session/i.test(error.message);
+}
+
+function isRecoverableNetworkError(error: unknown): boolean {
+  if (!(error instanceof Error)) {
+    return false;
+  }
+
+  const code = getNodeErrorCode(error);
+  if (code && ["ETIMEDOUT", "ECONNRESET", "ECONNREFUSED", "ENOTFOUND"].includes(code)) {
+    return true;
+  }
+
+  return /fetch failed/i.test(error.message);
+}
+
+function getNodeErrorCode(error: Error): string | undefined {
+  const cause = (error as { cause?: unknown }).cause;
+  if (cause && typeof cause === "object" && "code" in cause) {
+    const value = (cause as { code?: unknown }).code;
+    return typeof value === "string" ? value : undefined;
+  }
+
+  return undefined;
 }

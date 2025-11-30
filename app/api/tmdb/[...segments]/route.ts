@@ -1,15 +1,13 @@
 import { NextResponse } from "next/server";
 
-const TMDB_BASE_URL = "https://api.themoviedb.org/3";
-const CACHE_SECONDS = Number(process.env.TMDB_CACHE_SECONDS ?? "3600");
-const TMDB_API_KEY = process.env.TMDB_API_KEY;
+import { fetchTmdb } from "@/lib/tmdb/fetcher";
 
 export const runtime = "edge";
-export const revalidate = CACHE_SECONDS;
+export const revalidate = 3600;
 
-function isV4Token(key: string) {
-  return key.startsWith("eyJ");
-}
+const CACHE_SECONDS = process.env.TMDB_CACHE_SECONDS
+  ? Number(process.env.TMDB_CACHE_SECONDS)
+  : revalidate;
 
 // Translate user-friendly catch-all segments into concrete TMDB REST paths.
 function mapSegmentsToPath(segments: string[], searchParams: URLSearchParams): string | null {
@@ -44,10 +42,6 @@ export async function GET(
   context: { params: Promise<{ segments: string[] }> }
 ) {
   const params = await context.params;
-  if (!TMDB_API_KEY) {
-    return NextResponse.json({ error: "TMDB API key missing" }, { status: 500 });
-  }
-
   const { searchParams } = new URL(request.url);
   const path = mapSegmentsToPath(params.segments ?? [], searchParams);
 
@@ -55,45 +49,25 @@ export async function GET(
     return NextResponse.json({ error: "Unsupported TMDB route" }, { status: 400 });
   }
 
-  const url = new URL(`${TMDB_BASE_URL}/${path}`);
-
   // `window` is only used internally for mapping
   searchParams.delete("window");
 
-  searchParams.forEach((value, key) => {
-    url.searchParams.set(key, value);
-  });
+  try {
+    const payload = await fetchTmdb(path, {
+      searchParams: Object.fromEntries(searchParams.entries()),
+      init: {
+        cache: "force-cache",
+        next: { revalidate: CACHE_SECONDS },
+      },
+    });
 
-  if (!isV4Token(TMDB_API_KEY)) {
-    url.searchParams.set("api_key", TMDB_API_KEY);
+    return NextResponse.json(payload, {
+      headers: {
+        "Cache-Control": `public, s-maxage=${CACHE_SECONDS}`,
+      },
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "TMDB upstream error";
+    return NextResponse.json({ error: message }, { status: 502 });
   }
-
-  const res = await fetch(url.toString(), {
-    headers: isV4Token(TMDB_API_KEY)
-      ? {
-          Authorization: `Bearer ${TMDB_API_KEY}`,
-          accept: "application/json",
-        }
-      : {
-          accept: "application/json",
-        },
-    cache: "force-cache",
-    next: { revalidate: CACHE_SECONDS },
-  });
-
-  if (!res.ok) {
-    const body = await res.text();
-    return NextResponse.json(
-      { error: "TMDB upsteam error", status: res.status, body },
-      { status: 502 }
-    );
-  }
-
-  const payload = await res.json();
-
-  return NextResponse.json(payload, {
-    headers: {
-      "Cache-Control": `public, s-maxage=${CACHE_SECONDS}`,
-    },
-  });
 }

@@ -2,15 +2,18 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, Clock, Star } from "lucide-react";
 
+import { notFound } from "next/navigation";
+
 import { MovieGrid } from "@/components/movie-grid";
 import { SectionHeading } from "@/components/section-heading";
+import { WatchlistPanel } from "@/components/watchlist-panel";
 import { getMovieDetails, getMovieRecommendations, posterUrl } from "@/lib/tmdb";
 
 interface MoviePageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
-export const revalidate = 300;
+export const dynamic = "force-dynamic";
 
 function formatRuntime(runtime?: number) {
   if (!runtime) return null;
@@ -20,8 +23,21 @@ function formatRuntime(runtime?: number) {
 }
 
 export default async function MoviePage({ params }: MoviePageProps) {
-  const movie = await getMovieDetails(params.id);
-  const recommendations = await getMovieRecommendations(params.id);
+  const { id } = await params;
+
+  let movie;
+  try {
+    movie = await getMovieDetails(id);
+  } catch {
+    // Gracefully handle invalid or missing TMDB ids.
+    notFound();
+  }
+
+  if (!movie) {
+    notFound();
+  }
+
+  const recommendations = await getMovieRecommendations(id);
   const poster = posterUrl(movie.poster_path, "w500");
   const backdrop = posterUrl(movie.backdrop_path ?? movie.poster_path, "original");
 
@@ -65,6 +81,14 @@ export default async function MoviePage({ params }: MoviePageProps) {
                 </span>
               )}
             </div>
+
+            <WatchlistPanel
+              tmdbId={movie.id}
+              title={movie.title ?? movie.name ?? "Untitled"}
+              mediaType="movie"
+              posterPath={movie.poster_path}
+              backdropPath={movie.backdrop_path}
+            />
           </div>
         </div>
       </section>
