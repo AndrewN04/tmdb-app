@@ -29,7 +29,7 @@ export interface WatchlistStatusResult {
     | null;
 }
 
-  const EMPTY_STATUS: WatchlistStatusResult = { user: null, item: null };
+const EMPTY_STATUS: WatchlistStatusResult = { user: null, item: null };
 
 export interface WatchlistUpsertInput extends BaseWatchlistInput {
   title: string;
@@ -209,12 +209,8 @@ export async function getWatchlistStatus(input: BaseWatchlistInput): Promise<Wat
     const supabase = await createSupabaseServerClient();
     const { data, error } = await supabase.auth.getUser();
 
-    // Debug logging
-    console.log("[watchlist] getUser result:", { user: data.user?.email, error: error?.message });
-
     if (error) {
       if (isRecoverableAuthError(error)) {
-        console.warn("[watchlist] Unable to read Supabase session", error);
         return EMPTY_STATUS;
       }
 
@@ -222,7 +218,6 @@ export async function getWatchlistStatus(input: BaseWatchlistInput): Promise<Wat
     }
 
     if (!data.user) {
-      console.log("[watchlist] No user found in session");
       return EMPTY_STATUS;
     }
 

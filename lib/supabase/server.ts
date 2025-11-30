@@ -26,29 +26,3 @@ export async function createSupabaseServerClient() {
     },
   });
 }
-
-// Creates a server client with service role key for admin operations (bypasses RLS).
-// Only use this for operations that require elevated privileges.
-export async function createSupabaseAdminClient() {
-  const cookieStore = await cookies();
-
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-  if (!supabaseUrl || !supabaseServiceRoleKey) {
-    throw new Error("Supabase admin credentials are missing");
-  }
-
-  return createServerClient(supabaseUrl, supabaseServiceRoleKey, {
-    cookies: {
-      getAll() {
-        return cookieStore.getAll();
-      },
-      setAll(cookiesToSet) {
-        cookiesToSet.forEach(({ name, value, options }) => {
-          cookieStore.set(name, value, options);
-        });
-      },
-    },
-  });
-}
