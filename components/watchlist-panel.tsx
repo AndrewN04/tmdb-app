@@ -211,7 +211,7 @@ export function WatchlistPanel({ tmdbId, title, mediaType, posterPath, backdropP
       </div>
 
       {isAuthenticated ? (
-        <div className="mt-6 space-y-4">
+        <div className="mt-6 min-h-80 space-y-4">
           {isLoading && (
             <div className="inline-flex items-center gap-2 rounded-full border border-white/20 px-3 py-1 text-xs text-white/70">
               <RefreshCw className="h-3.5 w-3.5 animate-spin" /> Syncing status
@@ -263,7 +263,7 @@ export function WatchlistPanel({ tmdbId, title, mediaType, posterPath, backdropP
               type="button"
               onClick={handleSave}
               disabled={isPending}
-              className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2 text-sm font-semibold text-black"
+              className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2 text-sm font-semibold text-black min-w-44"
             >
               {isPending ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -275,27 +275,36 @@ export function WatchlistPanel({ tmdbId, title, mediaType, posterPath, backdropP
               {hasItem ? "Update watchlist" : "Add to watchlist"}
             </button>
 
-            {hasItem && (
-              <button
-                type="button"
-                onClick={handleRemove}
-                disabled={isPending}
-                className="inline-flex items-center gap-2 rounded-full border border-white/20 px-5 py-2 text-sm text-white/80 hover:border-white/40"
-              >
-                <Trash2 className="h-4 w-4" />
-                Remove
-              </button>
-            )}
+            <button
+              type="button"
+              onClick={handleRemove}
+              disabled={isPending || !hasItem}
+              className={clsx(
+                "inline-flex items-center gap-2 rounded-full border border-white/20 px-5 py-2 text-sm text-white/80 hover:border-white/40 transition-opacity",
+                hasItem ? "opacity-100" : "opacity-0 pointer-events-none"
+              )}
+            >
+              <Trash2 className="h-4 w-4" />
+              Remove
+            </button>
           </div>
 
-          {feedback && <p className="text-sm text-emerald-300">{feedback}</p>}
-          {(error || loadError) && <p className="text-sm text-red-400">{error ?? loadError}</p>}
+          <p className={clsx("text-sm h-5", feedback ? "text-emerald-300" : (error || loadError) ? "text-red-400" : "invisible")}>
+            {feedback ?? error ?? loadError ?? "\u00A0"}
+          </p>
         </div>
       ) : (
-        <p className="mt-4 rounded-xl border border-white/10 bg-black/40 p-4 text-sm text-white/70">
-          Head to the profile page to sign in with Supabase Auth, then come back to add notes and favorites for this
-          movie.
-        </p>
+        <div className="mt-4 rounded-xl border border-white/10 bg-black/40 p-4">
+          <p className="text-sm text-white/70">
+            Sign in to add notes, favorites, and categories for this movie.
+          </p>
+          <a
+            href="/sign-in"
+            className="mt-3 inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-black hover:bg-white/90 transition"
+          >
+            Sign in
+          </a>
+        </div>
       )}
     </section>
   );

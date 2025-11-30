@@ -209,6 +209,9 @@ export async function getWatchlistStatus(input: BaseWatchlistInput): Promise<Wat
     const supabase = await createSupabaseServerClient();
     const { data, error } = await supabase.auth.getUser();
 
+    // Debug logging
+    console.log("[watchlist] getUser result:", { user: data.user?.email, error: error?.message });
+
     if (error) {
       if (isRecoverableAuthError(error)) {
         console.warn("[watchlist] Unable to read Supabase session", error);
@@ -219,6 +222,7 @@ export async function getWatchlistStatus(input: BaseWatchlistInput): Promise<Wat
     }
 
     if (!data.user) {
+      console.log("[watchlist] No user found in session");
       return EMPTY_STATUS;
     }
 
@@ -280,4 +284,51 @@ function getNodeErrorCode(error: Error): string | undefined {
   }
 
   return undefined;
+}
+
+export interface WatchlistItemData {
+  id: string;
+  tmdbId: number;
+  title: string;
+  mediaType: string;
+  posterPath: string | null;
+  backdropPath: string | null;
+  notes: string | null;
+  favorite: boolean;
+  categories: string[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export async function getUserWatchlist(): Promise<WatchlistItemData[]> {
+  try {
+    const supabase = await createSupabaseServerClient();
+    const { data, error } = await supabase.auth.getUser();
+
+    if (error || !data.user) {
+      return [];
+    }
+
+    const items = await prisma.watchlistItem.findMany({
+      where: { userId: data.user.id },
+      orderBy: { createdAt: "desc" },
+    });
+
+    return items.map((item) => ({
+      id: item.id,
+      tmdbId: item.tmdbId,
+      title: item.title,
+      mediaType: item.mediaType,
+      posterPath: item.posterPath,
+      backdropPath: item.backdropPath,
+      notes: item.notes,
+      favorite: item.favorite,
+      categories: item.categories,
+      createdAt: item.createdAt,
+      updatedAt: item.updatedAt,
+    }));
+  } catch (error) {
+    console.error("[watchlist] Failed to fetch user watchlist", error);
+    return [];
+  }
 }

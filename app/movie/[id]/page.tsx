@@ -47,14 +47,14 @@ export default async function MoviePage({ params }: MoviePageProps) {
         <ArrowLeft className="h-4 w-4" /> Back
       </Link>
 
-      <section className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5">
+      <section className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 min-h-[600px]">
         {backdrop && (
-          <Image src={backdrop} alt={movie.title ?? "Movie"} fill className="absolute inset-0 h-full w-full object-cover opacity-30" />
+          <Image src={backdrop} alt={movie.title ?? "Movie"} fill className="absolute inset-0 h-full w-full object-cover opacity-30" sizes="100vw" priority />
         )}
         <div className="relative flex flex-col gap-10 bg-linear-to-r from-black/80 via-black/40 to-transparent px-8 py-10 md:flex-row">
           {poster && (
-            <div className="shrink-0 overflow-hidden rounded-2xl border border-white/10">
-              <Image src={poster} alt={movie.title ?? "Movie poster"} width={360} height={540} className="h-full w-full object-cover" priority />
+            <div className="shrink-0 w-60 md:w-72 lg:w-90 aspect-2/3 relative overflow-hidden rounded-2xl border border-white/10">
+              <Image src={poster} alt={movie.title ?? "Movie poster"} fill className="object-cover" sizes="(max-width: 768px) 240px, (max-width: 1024px) 300px, 360px" priority />
             </div>
           )}
 

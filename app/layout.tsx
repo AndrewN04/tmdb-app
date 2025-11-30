@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Geist, Geist_Mono } from "next/font/google";
+import { AuthButton } from "@/components/auth-button";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -27,18 +28,16 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-slate-950 text-white antialiased`}>
         <div className="flex min-h-screen flex-col">
-          <header className="border-b border-white/10 bg-slate-950/80 backdrop-blur">
+          <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/95 backdrop-blur-sm">
             <nav className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4">
               <Link href="/" className="text-xl font-semibold tracking-tight">
                 TMDB
               </Link>
-              <div className="flex items-center gap-4 text-sm text-white/80">
+              <div className="flex items-center gap-6 text-sm text-white/80">
                 <Link href="/browse" className="hover:text-white">
                   Browse
                 </Link>
-                <Link href="/profile" className="hover:text-white">
-                  Profile
-                </Link>
+                <AuthButton />
               </div>
             </nav>
           </header>
