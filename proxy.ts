@@ -1,29 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 
-const VERIFICATION_COOKIE_NAME = "turnstile_verified";
-
-// Paths that don't require Turnstile verification
-const TURNSTILE_PUBLIC_PATHS = [
-  "/challenge",
-  "/api/turnstile",
-];
-
 export async function proxy(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-
-  // Check Turnstile verification first (skip for public paths and static assets)
-  const isTurnstilePublic = TURNSTILE_PUBLIC_PATHS.some((path) => pathname.startsWith(path));
-  const isStaticAsset = pathname.startsWith("/_next") || pathname.includes(".");
-  
-  if (!isTurnstilePublic && !isStaticAsset) {
-    const isVerified = request.cookies.get(VERIFICATION_COOKIE_NAME)?.value === "true";
-    if (!isVerified) {
-      return NextResponse.redirect(new URL("/challenge", request.url));
-    }
-  }
-
-  // Continue with Supabase auth session handling (from proxy.ts)
   let supabaseResponse = NextResponse.next({ request });
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;

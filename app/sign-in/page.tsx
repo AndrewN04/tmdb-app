@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
@@ -13,52 +13,12 @@ export default function SignInPage() {
   const [isLoading, setIsLoading] = useState<"github" | "google" | "email" | "reset" | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [showSignUpPrompt, setShowSignUpPrompt] = useState(false);
-  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
   const [resetSuccess, setResetSuccess] = useState(false);
   const [resetError, setResetError] = useState<string | null>(null);
   const [showResetSignUpPrompt, setShowResetSignUpPrompt] = useState(false);
-  const turnstileRef = useRef<HTMLDivElement>(null);
-  const widgetIdRef = useRef<string | null>(null);
   const router = useRouter();
-
-  useEffect(() => {
-    const existingScript = document.querySelector(
-      'script[src="https://challenges.cloudflare.com/turnstile/v0/api.js"]'
-    );
-
-    const initTurnstile = () => {
-      if (window.turnstile && turnstileRef.current && !widgetIdRef.current) {
-        widgetIdRef.current = window.turnstile.render(turnstileRef.current, {
-          sitekey: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!,
-          callback: (token: string) => setCaptchaToken(token),
-          "expired-callback": () => setCaptchaToken(null),
-          "error-callback": () => setCaptchaToken(null),
-          theme: "dark",
-          size: "invisible",
-        });
-      }
-    };
-
-    if (existingScript) {
-      initTurnstile();
-    } else {
-      const script = document.createElement("script");
-      script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
-      script.async = true;
-      script.defer = true;
-      script.onload = initTurnstile;
-      document.head.appendChild(script);
-    }
-
-    return () => {
-      if (window.turnstile && widgetIdRef.current) {
-        window.turnstile.remove(widgetIdRef.current);
-        widgetIdRef.current = null;
-      }
-    };
-  }, []);
 
   const handleOAuthSignIn = async (provider: "github" | "google") => {
     setIsLoading(provider);
@@ -100,24 +60,14 @@ export default function SignInPage() {
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
-        options: {
-          captchaToken: captchaToken ?? undefined,
-        },
       });
 
       if (error) {
         if (error.message.includes("Invalid login credentials")) {
           setError("Invalid email or password");
           setShowSignUpPrompt(true);
-        } else if (error.message.includes("captcha")) {
-          setError("Verification failed. Please refresh and try again.");
         } else {
           setError(error.message);
-        }
-        // Reset captcha on error
-        if (window.turnstile && widgetIdRef.current) {
-          window.turnstile.reset(widgetIdRef.current);
-          setCaptchaToken(null);
         }
         setIsLoading(null);
       } else {
@@ -145,24 +95,12 @@ export default function SignInPage() {
     try {
       const supabase = createSupabaseBrowserClient();
       
-      // First check if user exists by attempting to get user by email
-      // We use signInWithOtp with shouldCreateUser: false to check existence
       const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
         redirectTo: `${window.location.origin}/auth/callback?next=/reset-password`,
-        captchaToken: captchaToken ?? undefined,
       });
 
       if (error) {
-        if (error.message.includes("captcha")) {
-          setResetError("Verification failed. Please refresh and try again.");
-        } else {
-          setResetError(error.message);
-        }
-        // Reset captcha on error
-        if (window.turnstile && widgetIdRef.current) {
-          window.turnstile.reset(widgetIdRef.current);
-          setCaptchaToken(null);
-        }
+        setResetError(error.message);
         setIsLoading(null);
       } else {
         setResetSuccess(true);
@@ -184,9 +122,6 @@ export default function SignInPage() {
 
   return (
     <div className="flex min-h-[60vh] items-center justify-center">
-      {/* Invisible Turnstile CAPTCHA */}
-      <div ref={turnstileRef} />
-      
       <div className="w-full max-w-sm space-y-6">
         {showForgotPassword ? (
           // Forgot Password View

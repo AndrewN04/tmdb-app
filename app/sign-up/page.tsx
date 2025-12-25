@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { Mail, Lock, Eye, EyeOff, CheckCircle } from "lucide-react";
@@ -11,52 +11,9 @@ export default function SignUpPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-  const turnstileRef = useRef<HTMLDivElement>(null);
-  const widgetIdRef = useRef<string | null>(null);
-
-  useEffect(() => {
-    // Check if script already exists
-    const existingScript = document.querySelector(
-      'script[src="https://challenges.cloudflare.com/turnstile/v0/api.js"]'
-    );
-
-    const initTurnstile = () => {
-      if (window.turnstile && turnstileRef.current && !widgetIdRef.current) {
-        widgetIdRef.current = window.turnstile.render(turnstileRef.current, {
-          sitekey: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!,
-          callback: (token: string) => setCaptchaToken(token),
-          "expired-callback": () => setCaptchaToken(null),
-          "error-callback": () => setCaptchaToken(null),
-          theme: "dark",
-          size: "invisible",
-        });
-      }
-    };
-
-    if (existingScript) {
-      // Script already loaded, just init
-      initTurnstile();
-    } else {
-      // Load script
-      const script = document.createElement("script");
-      script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
-      script.async = true;
-      script.defer = true;
-      script.onload = initTurnstile;
-      document.head.appendChild(script);
-    }
-
-    return () => {
-      if (window.turnstile && widgetIdRef.current) {
-        window.turnstile.remove(widgetIdRef.current);
-        widgetIdRef.current = null;
-      }
-    };
-  }, []);
 
   const validateForm = (): string | null => {
     if (!email) return "Email is required";
@@ -67,7 +24,6 @@ export default function SignUpPage() {
     if (!/[a-z]/.test(password)) return "Password must contain a lowercase letter";
     if (!/[0-9]/.test(password)) return "Password must contain a number";
     if (password !== confirmPassword) return "Passwords do not match";
-    if (!captchaToken) return "Please complete the CAPTCHA";
     return null;
   };
 
@@ -89,25 +45,15 @@ export default function SignUpPage() {
         email,
         password,
         options: {
-          captchaToken: captchaToken!,
           emailRedirectTo: `${window.location.origin}/auth/callback`,
         },
       });
 
       if (error) {
         setError(error.message);
-        // Reset captcha on error
-        if (window.turnstile && widgetIdRef.current) {
-          window.turnstile.reset(widgetIdRef.current);
-          setCaptchaToken(null);
-        }
       } else if (data.user?.identities?.length === 0) {
         // User exists (signed up via OAuth or email already confirmed)
         setError("This email is already in use. Please try a different email or login.");
-        if (window.turnstile && widgetIdRef.current) {
-          window.turnstile.reset(widgetIdRef.current);
-          setCaptchaToken(null);
-        }
       } else {
         setSuccess(true);
       }
@@ -147,9 +93,6 @@ export default function SignUpPage() {
 
   return (
     <div className="flex min-h-[60vh] items-center justify-center">
-      {/* Invisible Turnstile CAPTCHA */}
-      <div ref={turnstileRef} />
-
       <div className="w-full max-w-sm space-y-6">
         <div className="text-center">
           <h1 className="text-2xl font-bold">Create an account</h1>
