@@ -25,14 +25,16 @@ This document provides an in-depth walkthrough of every major file and function 
 
 ## Project Overview
 
-**TMDB Watchlist** is a movie discovery application that:
+**TMDB Watchlist** is a movie and TV show discovery application that:
 
-- Fetches live movie data from The Movie Database (TMDB) API.
+- Fetches live movie and TV show data from The Movie Database (TMDB) API.
+- Provides search functionality across movies and TV shows with filtering options.
 - Lets authenticated users manage a personal watchlist with notes, favorites, and category tags.
 - Persists watchlist data in a Supabase-hosted PostgreSQL database via Prisma ORM.
 - Uses Supabase Auth for user identity (supporting magic links or OAuth).
 
 The goal is to demonstrate a modern full-stack Next.js 16 App Router architecture with:
+
 - React Server Components for data fetching.
 - Server Actions for mutations.
 - Edge-cached API routes for TMDB proxy calls.
@@ -43,7 +45,7 @@ The goal is to demonstrate a modern full-stack Next.js 16 App Router architectur
 ## Tech Stack
 
 | Layer | Technology |
-|-------|-----------|
+| ------- | --------- |
 | Framework | Next.js 16 (App Router, Turbopack) |
 | Language | TypeScript 5 |
 | UI | React 19, Tailwind CSS 4, lucide-react icons |
@@ -57,7 +59,7 @@ The goal is to demonstrate a modern full-stack Next.js 16 App Router architectur
 
 ## Directory Structure
 
-```
+```text
 tmdb/
 ├── app/                    # Next.js App Router
 │   ├── actions/            # Server Actions
@@ -128,7 +130,7 @@ model WatchlistItem {
   userId       String   @db.Uuid
   tmdbId       Int
   title        String
-  mediaType    String
+  mediaType    String   // "movie" or "tv"
   posterPath   String?
   backdropPath String?
   notes        String?
@@ -139,17 +141,19 @@ model WatchlistItem {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, tmdbId])
+  @@unique([userId, tmdbId, mediaType])
   @@index([userId])
   @@index([tmdbId])
+  @@index([mediaType])
 }
 ```
 
 **Key Design Decisions:**
 
 - `User.id` is a UUID matching Supabase Auth's `auth.uid()`.
-- `WatchlistItem` uses a composite unique constraint `@@unique([userId, tmdbId])` so a user can only have one entry per TMDB movie.
-- Indexes on `userId` and `tmdbId` speed up common lookups.
+- `WatchlistItem` uses a composite unique constraint `@@unique([userId, tmdbId, mediaType])` so a user can save both a movie and TV show with the same TMDB ID (TMDB uses separate ID spaces for movies and TV).
+- `mediaType` field distinguishes between `"movie"` and `"tv"` entries.
+- Indexes on `userId`, `tmdbId`, and `mediaType` speed up common lookups.
 - `categories` is a Postgres array (`String[]`) for flexible tagging without a join table.
 
 ### `lib/prisma.ts`
@@ -318,7 +322,7 @@ export async function fetchTmdb<T>(endpoint: string, options: FetchTmdbOptions =
 **Helper Functions:**
 
 | Function | Purpose |
-|----------|---------|
+| -------- | ------- |
 | `ensureApiKey()` | Throws if `TMDB_API_KEY` is missing. |
 | `isV4Token(key)` | Detects Bearer-style v4 tokens vs. v3 query-string keys. |
 | `mergeHeaders(base, override)` | Combines default headers with caller overrides. |
@@ -330,29 +334,98 @@ The import at the top ensures this module can only run on the server—preventin
 
 ### `lib/tmdb.ts`
 
-High-level domain functions built on `fetchTmdb`:
+High-level domain functions built on `fetchTmdb`. The API layer supports both movies and TV shows with a unified type system.
+
+#### Core Types
 
 ```typescript
-export async function getPopularMovies(page = "1") {
-  return fetchTmdb<MovieListResponse>("movie/popular", { searchParams: { page } });
+// Unified type for both movies and TV shows
+interface MediaSummary {
+  id: number;
+  title?: string;        // Movies
+  name?: string;         // TV shows
+  overview: string;
+  poster_path: string | null;
+  backdrop_path: string | null;
+  vote_average: number;
+  release_date?: string; // Movies
+  first_air_date?: string; // TV shows
+  media_type?: "movie" | "tv" | "person";
+  genre_ids?: number[];
 }
 
-export async function getTrendingMovies(window = "day") {
-  return fetchTmdb<MovieListResponse>(`trending/movie/${window}`);
+interface MediaListResponse {
+  page: number;
+  results: MediaSummary[];
+  total_pages: number;
+  total_results: number;
 }
-
-export async function getTopRatedMovies(page = "1") { /* ... */ }
-export async function getUpcomingMovies(page = "1") { /* ... */ }
-export async function getMovieDetails(id: string) { /* ... */ }
-export async function getMovieRecommendations(id: string) { /* ... */ }
 ```
 
-**Utility Functions:**
+#### Movie Functions
+
+```typescript
+export async function getPopularMovies(page = "1") { /* ... */ }
+export async function getTrendingMovies(window: "day" | "week" = "day") { /* ... */ }
+export async function getTopRatedMovies(page = "1") { /* ... */ }
+export async function getUpcomingMovies(page = "1") { /* ... */ }
+export async function getNowPlayingMovies(page = "1") { /* ... */ }
+export async function getMovieDetails(id: string) { /* includes credits */ }
+export async function getMovieRecommendations(id: string) { /* ... */ }
+export async function getSimilarMovies(id: string) { /* ... */ }
+```
+
+#### TV Show Functions
+
+```typescript
+export async function getPopularTV(page = "1") { /* ... */ }
+export async function getTrendingTV(window: "day" | "week" = "day") { /* ... */ }
+export async function getTopRatedTV(page = "1") { /* ... */ }
+export async function getOnTheAirTV(page = "1") { /* ... */ }
+export async function getAiringTodayTV(page = "1") { /* ... */ }
+export async function getTVDetails(id: string) { /* includes credits */ }
+export async function getTVRecommendations(id: string) { /* ... */ }
+export async function getSimilarTV(id: string) { /* ... */ }
+```
+
+#### Genre Functions
+
+```typescript
+export async function getMovieGenres() { /* ... */ }
+export async function getTVGenres() { /* ... */ }
+export async function getGenres(type: "movie" | "tv") { /* ... */ }
+```
+
+#### Search Functions
+
+```typescript
+export async function searchMulti(query: string, page = "1") { /* movies + TV combined */ }
+export async function searchMovies(query: string, page = "1", filters?: SearchFilters) { /* ... */ }
+export async function searchTV(query: string, page = "1", filters?: SearchFilters) { /* ... */ }
+```
+
+#### Discover Functions (Advanced Filtering)
+
+```typescript
+export async function discoverMovies(filters: SearchFilters = {}) { /* ... */ }
+export async function discoverTV(filters: SearchFilters = {}) { /* ... */ }
+
+// SearchFilters supports: page, year, with_genres, primary_release_date.gte/lte, sort_by, etc.
+```
+
+#### Utility Functions
 
 | Function | Purpose |
-|----------|---------|
-| `formatYear(movie)` | Extracts year from `release_date` or `first_air_date`. |
-| `posterUrl(path, size)` | Constructs full TMDB image URL with specified size variant. |
+| -------- | ------- |
+| `getTitle(media)` | Returns `title` or `name` depending on media type. |
+| `formatYear(media)` | Extracts year from `release_date` or `first_air_date`. |
+| `formatDate(media, locale)` | Formats release/air date for display. |
+| `formatRuntime(minutes)` | Converts minutes to "2h 15m" format. |
+| `ratingToPercent(voteAverage)` | Converts 0-10 rating to percentage (e.g., 8.4 → 84). |
+| `posterUrl(path, size)` | Constructs full TMDB poster image URL. |
+| `backdropUrl(path, size)` | Constructs full TMDB backdrop image URL. |
+| `profileUrl(path, size)` | Constructs full TMDB profile image URL (for cast/crew). |
+| `getMediaType(media)` | Infers "movie" or "tv" from object properties. |
 
 ---
 
@@ -393,26 +466,64 @@ Ensures the Prisma `User` table mirrors Supabase Auth—runs on every mutation s
 #### Validation Helpers
 
 | Function | Purpose |
-|----------|---------|
+| -------- | ------- |
 | `coerceTmdbId(id)` | Parses string/number to positive int, throws on invalid. |
+| `validateMediaType(mediaType)` | Ensures mediaType is "movie" or "tv", throws on invalid. |
 | `sanitizeNotes(notes)` | Trims, enforces max length (2000 chars). |
 | `sanitizeCategories(categories)` | Trims, filters blanks, caps at 12 entries. |
+
+#### Input Types
+
+All watchlist actions now require `mediaType` to distinguish between movies and TV shows:
+
+```typescript
+interface BaseWatchlistInput {
+  tmdbId: number | string;
+  mediaType: "movie" | "tv";  // Required for all actions
+}
+
+interface WatchlistUpsertInput extends BaseWatchlistInput {
+  title: string;
+  posterPath?: string | null;
+  backdropPath?: string | null;
+  notes?: string | null;
+  favorite?: boolean;
+  categories?: string[];
+}
+```
 
 #### CRUD Actions
 
 | Action | Description |
-|--------|-------------|
+| ------ | ----------- |
 | `saveWatchlistItem(input)` | Upserts a watchlist entry with full metadata. |
 | `updateWatchlistMeta(input)` | Partial update for notes, categories, or favorite flag. |
 | `removeWatchlistItem(input)` | Deletes entry; swallows "not found" errors gracefully. |
 | `getWatchlistStatus(input)` | Returns current user + item state; used by `WatchlistPanel`. |
+| `getUserWatchlist(options)` | Fetches user's watchlist with filtering/sorting options. |
+| `getWatchlistCounts()` | Returns counts by media type (movies, TV, favorites, total). |
+
+#### Query Options
+
+```typescript
+interface GetUserWatchlistOptions {
+  mediaType?: "movie" | "tv" | "all";  // Filter by type
+  sortBy?: "createdAt" | "title" | "updatedAt";
+  sortOrder?: "asc" | "desc";
+  favoritesOnly?: boolean;
+}
+```
 
 #### Revalidation
 
 ```typescript
-function revalidateWatchlistViews(tmdbId: number) {
+function revalidateWatchlistViews(tmdbId: number, mediaType: "movie" | "tv") {
   revalidatePath("/profile");
-  revalidatePath(`/movie/${tmdbId}`);
+  if (mediaType === "movie") {
+    revalidatePath(`/movie/${tmdbId}`);
+  } else {
+    revalidatePath(`/tv/${tmdbId}`);
+  }
 }
 ```
 
@@ -474,6 +585,7 @@ export default async function Home() {
 ```
 
 Fetches three TMDB lists in parallel and renders:
+
 1. A hero banner with the top trending movie.
 2. Three grids: Popular, Trending, Upcoming.
 
@@ -536,11 +648,12 @@ Reusable heading with optional description and action slot.
 
 **Client Component** (`"use client"`) that:
 
-1. On mount, calls `getWatchlistStatus` Server Action to check auth and existing item.
-2. Renders auth-aware UI: signed-out prompt vs. full form.
-3. Provides inputs for notes, categories, and favorite toggle.
-4. Calls `saveWatchlistItem`, `updateWatchlistMeta`, or `removeWatchlistItem` on user interaction.
-5. Uses `useTransition` for non-blocking optimistic updates with loading spinners.
+1. Accepts `mediaType: "movie" | "tv"` prop to handle both content types.
+2. On mount, calls `getWatchlistStatus` Server Action to check auth and existing item.
+3. Renders auth-aware UI: signed-out prompt vs. full form.
+4. Provides inputs for notes, categories, and favorite toggle.
+5. Calls `saveWatchlistItem`, `updateWatchlistMeta`, or `removeWatchlistItem` on user interaction (all with `mediaType`).
+6. Uses `useTransition` for non-blocking optimistic updates with loading spinners.
 
 ### `components/ui/badge.tsx`
 
@@ -633,7 +746,7 @@ export async function GET(request: Request, context) {
 ## Environment Variables
 
 | Variable | Scope | Purpose |
-|----------|-------|---------|
+| -------- | ----- | ------- |
 | `DATABASE_URL` | Server | Prisma connection string (Supabase Postgres pooler). |
 | `NEXT_PUBLIC_SUPABASE_URL` | Public | Supabase project URL. |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Public | Supabase anon/public key for browser auth. |
@@ -661,7 +774,7 @@ export async function GET(request: Request, context) {
 ## Caching & Revalidation
 
 | Layer | Strategy |
-|-------|----------|
+| ----- | -------- |
 | Home / Browse pages | `export const revalidate = 300` (ISR every 5 min). |
 | Movie detail page | `export const dynamic = "force-dynamic"` (always fresh). |
 | TMDB API proxy | Edge cache with `s-maxage=3600` (1 hour). |
@@ -678,5 +791,7 @@ This project demonstrates a production-grade architecture combining:
 - **Supabase Auth + Prisma** for secure, scalable user data.
 - **Edge caching** for performant external API proxying.
 - **Graceful error handling** to keep pages functional under partial failures.
+- **Unified media types** supporting both movies and TV shows with a single API layer.
+- **Search and discover APIs** for flexible content exploration with filtering.
 
-The codebase is intentionally modular—each `lib/` file handles a single concern, components are reusable, and environment configuration is centralized. This makes it straightforward to extend (e.g., add TV shows, implement search, build out the profile dashboard) without touching unrelated code.
+The codebase is intentionally modular—each `lib/` file handles a single concern, components are reusable, and environment configuration is centralized. The unified `MediaSummary` type and shared watchlist actions make it straightforward to extend without duplicating code.

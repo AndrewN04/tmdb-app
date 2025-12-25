@@ -3,7 +3,7 @@
 ## Completed
 
 - [x] **Rename Supabase env vars** – Switched to explicit `ANON_KEY` / `SERVICE_ROLE_KEY` naming
-- [x] **Add Vitest testing infrastructure** – 231 unit tests covering lib utilities, components, and actions
+- [x] **Add Vitest testing infrastructure** – 237 unit tests covering lib utilities, components, and actions
 - [x] **Update @supabase/ssr to 0.8.0** – Migrated to new `getAll`/`setAll` cookie API
 - [x] **Update @types/node to v24** – Matches Node.js 24 runtime
 - [x] **Create ARCHITECTURE.md** – Comprehensive codebase documentation
