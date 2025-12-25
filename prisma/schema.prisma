@@ -37,7 +37,8 @@ model WatchlistItem {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, tmdbId])
+  @@unique([userId, tmdbId, mediaType])
   @@index([userId])
   @@index([tmdbId])
+  @@index([mediaType])
 }

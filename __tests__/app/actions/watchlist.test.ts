@@ -25,6 +25,7 @@ vi.mock("@/lib/prisma", () => ({
       delete: vi.fn(),
       findUnique: vi.fn(),
       findMany: vi.fn(),
+      count: vi.fn(),
     },
   },
 }));
@@ -103,8 +104,9 @@ describe("watchlist actions", () => {
       expect(mockPrismaWatchlistItemUpsert).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
-            userId_tmdbId: expect.objectContaining({
+            userId_tmdbId_mediaType: expect.objectContaining({
               tmdbId: 12345,
+              mediaType: "movie",
             }),
           }),
         })
@@ -123,7 +125,7 @@ describe("watchlist actions", () => {
       expect(mockPrismaWatchlistItemUpsert).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
-            userId_tmdbId: expect.objectContaining({
+            userId_tmdbId_mediaType: expect.objectContaining({
               tmdbId: 12345,
             }),
           }),
@@ -417,9 +419,10 @@ describe("watchlist actions", () => {
 
       expect(mockPrismaWatchlistItemUpsert).toHaveBeenCalledWith({
         where: {
-          userId_tmdbId: {
+          userId_tmdbId_mediaType: {
             userId: "user-123",
             tmdbId: 12345,
+            mediaType: "movie",
           },
         },
         create: {
@@ -435,7 +438,6 @@ describe("watchlist actions", () => {
         },
         update: {
           title: "Test Movie",
-          mediaType: "movie",
           posterPath: "/poster.jpg",
           backdropPath: "/backdrop.jpg",
           favorite: true,
@@ -445,7 +447,7 @@ describe("watchlist actions", () => {
       });
     });
 
-    it("should revalidate paths after save", async () => {
+    it("should revalidate paths after save for movie", async () => {
       mockPrismaWatchlistItemUpsert.mockResolvedValue(mockWatchlistItem);
 
       await saveWatchlistItem({
@@ -456,6 +458,20 @@ describe("watchlist actions", () => {
 
       expect(mockRevalidatePath).toHaveBeenCalledWith("/profile");
       expect(mockRevalidatePath).toHaveBeenCalledWith("/movie/12345");
+    });
+
+    it("should revalidate paths after save for tv", async () => {
+      const tvItem = { ...mockWatchlistItem, mediaType: "tv" };
+      mockPrismaWatchlistItemUpsert.mockResolvedValue(tvItem);
+
+      await saveWatchlistItem({
+        tmdbId: 12345,
+        title: "Test TV Show",
+        mediaType: "tv",
+      });
+
+      expect(mockRevalidatePath).toHaveBeenCalledWith("/profile");
+      expect(mockRevalidatePath).toHaveBeenCalledWith("/tv/12345");
     });
 
     it("should return success with item", async () => {
@@ -483,7 +499,7 @@ describe("watchlist actions", () => {
       });
 
       await expect(
-        updateWatchlistMeta({ tmdbId: 12345, favorite: true })
+        updateWatchlistMeta({ tmdbId: 12345, mediaType: "movie", favorite: true })
       ).rejects.toThrow("You must be signed in to manage your watchlist");
     });
 
@@ -492,14 +508,16 @@ describe("watchlist actions", () => {
 
       await updateWatchlistMeta({
         tmdbId: 12345,
+        mediaType: "movie",
         favorite: true,
       });
 
       expect(mockPrismaWatchlistItemUpdate).toHaveBeenCalledWith({
         where: {
-          userId_tmdbId: {
+          userId_tmdbId_mediaType: {
             userId: "user-123",
             tmdbId: 12345,
+            mediaType: "movie",
           },
         },
         data: {
@@ -513,14 +531,16 @@ describe("watchlist actions", () => {
 
       await updateWatchlistMeta({
         tmdbId: 12345,
+        mediaType: "movie",
         notes: "Updated notes",
       });
 
       expect(mockPrismaWatchlistItemUpdate).toHaveBeenCalledWith({
         where: {
-          userId_tmdbId: {
+          userId_tmdbId_mediaType: {
             userId: "user-123",
             tmdbId: 12345,
+            mediaType: "movie",
           },
         },
         data: {
@@ -534,14 +554,16 @@ describe("watchlist actions", () => {
 
       await updateWatchlistMeta({
         tmdbId: 12345,
+        mediaType: "movie",
         categories: ["drama"],
       });
 
       expect(mockPrismaWatchlistItemUpdate).toHaveBeenCalledWith({
         where: {
-          userId_tmdbId: {
+          userId_tmdbId_mediaType: {
             userId: "user-123",
             tmdbId: 12345,
+            mediaType: "movie",
           },
         },
         data: {
@@ -550,13 +572,23 @@ describe("watchlist actions", () => {
       });
     });
 
-    it("should revalidate paths after update", async () => {
+    it("should revalidate paths after update for movie", async () => {
       mockPrismaWatchlistItemUpdate.mockResolvedValue(mockWatchlistItem);
 
-      await updateWatchlistMeta({ tmdbId: 12345, favorite: true });
+      await updateWatchlistMeta({ tmdbId: 12345, mediaType: "movie", favorite: true });
 
       expect(mockRevalidatePath).toHaveBeenCalledWith("/profile");
       expect(mockRevalidatePath).toHaveBeenCalledWith("/movie/12345");
+    });
+
+    it("should revalidate paths after update for tv", async () => {
+      const tvItem = { ...mockWatchlistItem, mediaType: "tv" };
+      mockPrismaWatchlistItemUpdate.mockResolvedValue(tvItem);
+
+      await updateWatchlistMeta({ tmdbId: 12345, mediaType: "tv", favorite: true });
+
+      expect(mockRevalidatePath).toHaveBeenCalledWith("/profile");
+      expect(mockRevalidatePath).toHaveBeenCalledWith("/tv/12345");
     });
   });
 
@@ -568,7 +600,7 @@ describe("watchlist actions", () => {
         },
       });
 
-      await expect(removeWatchlistItem({ tmdbId: 12345 })).rejects.toThrow(
+      await expect(removeWatchlistItem({ tmdbId: 12345, mediaType: "movie" })).rejects.toThrow(
         "You must be signed in to manage your watchlist"
       );
     });
@@ -576,31 +608,41 @@ describe("watchlist actions", () => {
     it("should delete watchlist item", async () => {
       mockPrismaWatchlistItemDelete.mockResolvedValue(mockWatchlistItem);
 
-      await removeWatchlistItem({ tmdbId: 12345 });
+      await removeWatchlistItem({ tmdbId: 12345, mediaType: "movie" });
 
       expect(mockPrismaWatchlistItemDelete).toHaveBeenCalledWith({
         where: {
-          userId_tmdbId: {
+          userId_tmdbId_mediaType: {
             userId: "user-123",
             tmdbId: 12345,
+            mediaType: "movie",
           },
         },
       });
     });
 
-    it("should revalidate paths after remove", async () => {
+    it("should revalidate paths after remove for movie", async () => {
       mockPrismaWatchlistItemDelete.mockResolvedValue(mockWatchlistItem);
 
-      await removeWatchlistItem({ tmdbId: 12345 });
+      await removeWatchlistItem({ tmdbId: 12345, mediaType: "movie" });
 
       expect(mockRevalidatePath).toHaveBeenCalledWith("/profile");
       expect(mockRevalidatePath).toHaveBeenCalledWith("/movie/12345");
     });
 
+    it("should revalidate paths after remove for tv", async () => {
+      mockPrismaWatchlistItemDelete.mockResolvedValue(mockWatchlistItem);
+
+      await removeWatchlistItem({ tmdbId: 12345, mediaType: "tv" });
+
+      expect(mockRevalidatePath).toHaveBeenCalledWith("/profile");
+      expect(mockRevalidatePath).toHaveBeenCalledWith("/tv/12345");
+    });
+
     it("should return success", async () => {
       mockPrismaWatchlistItemDelete.mockResolvedValue(mockWatchlistItem);
 
-      const result = await removeWatchlistItem({ tmdbId: 12345 });
+      const result = await removeWatchlistItem({ tmdbId: 12345, mediaType: "movie" });
 
       expect(result).toEqual({ success: true });
     });
@@ -614,7 +656,7 @@ describe("watchlist actions", () => {
         },
       });
 
-      const result = await getWatchlistStatus({ tmdbId: 12345 });
+      const result = await getWatchlistStatus({ tmdbId: 12345, mediaType: "movie" });
 
       expect(result).toEqual({ user: null, item: null });
     });
@@ -622,7 +664,7 @@ describe("watchlist actions", () => {
     it("should return user and item when authenticated with item", async () => {
       mockPrismaWatchlistItemFindUnique.mockResolvedValue(mockWatchlistItem);
 
-      const result = await getWatchlistStatus({ tmdbId: 12345 });
+      const result = await getWatchlistStatus({ tmdbId: 12345, mediaType: "movie" });
 
       expect(result).toEqual({
         user: {
@@ -640,7 +682,7 @@ describe("watchlist actions", () => {
     it("should return user without item when authenticated but no item exists", async () => {
       mockPrismaWatchlistItemFindUnique.mockResolvedValue(null);
 
-      const result = await getWatchlistStatus({ tmdbId: 12345 });
+      const result = await getWatchlistStatus({ tmdbId: 12345, mediaType: "movie" });
 
       expect(result).toEqual({
         user: {
@@ -661,7 +703,7 @@ describe("watchlist actions", () => {
         },
       });
 
-      const result = await getWatchlistStatus({ tmdbId: 12345 });
+      const result = await getWatchlistStatus({ tmdbId: 12345, mediaType: "movie" });
 
       expect(result).toEqual({ user: null, item: null });
     });
@@ -676,7 +718,7 @@ describe("watchlist actions", () => {
         },
       });
 
-      const result = await getWatchlistStatus({ tmdbId: 12345 });
+      const result = await getWatchlistStatus({ tmdbId: 12345, mediaType: "movie" });
 
       expect(result).toEqual({ user: null, item: null });
     });
@@ -691,7 +733,7 @@ describe("watchlist actions", () => {
         },
       });
 
-      await expect(getWatchlistStatus({ tmdbId: 12345 })).rejects.toThrow(
+      await expect(getWatchlistStatus({ tmdbId: 12345, mediaType: "movie" })).rejects.toThrow(
         "Invalid credentials"
       );
     });
@@ -732,7 +774,7 @@ describe("watchlist actions", () => {
       ]);
     });
 
-    it("should order items by createdAt descending", async () => {
+    it("should order items by createdAt descending by default", async () => {
       mockPrismaWatchlistItemFindMany.mockResolvedValue([]);
 
       await getUserWatchlist();
@@ -740,6 +782,39 @@ describe("watchlist actions", () => {
       expect(mockPrismaWatchlistItemFindMany).toHaveBeenCalledWith({
         where: { userId: "user-123" },
         orderBy: { createdAt: "desc" },
+      });
+    });
+
+    it("should filter by mediaType when specified", async () => {
+      mockPrismaWatchlistItemFindMany.mockResolvedValue([]);
+
+      await getUserWatchlist({ mediaType: "movie" });
+
+      expect(mockPrismaWatchlistItemFindMany).toHaveBeenCalledWith({
+        where: { userId: "user-123", mediaType: "movie" },
+        orderBy: { createdAt: "desc" },
+      });
+    });
+
+    it("should filter by favorites when specified", async () => {
+      mockPrismaWatchlistItemFindMany.mockResolvedValue([]);
+
+      await getUserWatchlist({ favoritesOnly: true });
+
+      expect(mockPrismaWatchlistItemFindMany).toHaveBeenCalledWith({
+        where: { userId: "user-123", favorite: true },
+        orderBy: { createdAt: "desc" },
+      });
+    });
+
+    it("should use custom sort order when specified", async () => {
+      mockPrismaWatchlistItemFindMany.mockResolvedValue([]);
+
+      await getUserWatchlist({ sortBy: "title", sortOrder: "asc" });
+
+      expect(mockPrismaWatchlistItemFindMany).toHaveBeenCalledWith({
+        where: { userId: "user-123" },
+        orderBy: { title: "asc" },
       });
     });
 

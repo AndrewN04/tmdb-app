@@ -14,7 +14,7 @@ import {
 interface WatchlistPanelProps {
   tmdbId: number;
   title: string;
-  mediaType: string;
+  mediaType: "movie" | "tv";
   posterPath?: string | null;
   backdropPath?: string | null;
 }
@@ -57,7 +57,7 @@ export function WatchlistPanel({ tmdbId, title, mediaType, posterPath, backdropP
       setIsLoading(true);
       setLoadError(null);
       try {
-        const payload = await getWatchlistStatus({ tmdbId });
+        const payload = await getWatchlistStatus({ tmdbId, mediaType });
 
         if (cancelled) return;
 
@@ -102,7 +102,7 @@ export function WatchlistPanel({ tmdbId, title, mediaType, posterPath, backdropP
     return () => {
       cancelled = true;
     };
-  }, [tmdbId]);
+  }, [tmdbId, mediaType]);
 
   const handleSave = () => {
     if (!isAuthenticated) return;
@@ -144,7 +144,7 @@ export function WatchlistPanel({ tmdbId, title, mediaType, posterPath, backdropP
 
     startTransition(async () => {
       try {
-        await removeWatchlistItem({ tmdbId });
+        await removeWatchlistItem({ tmdbId, mediaType });
         setItem(null);
         setFavorite(false);
         setNotes("");
@@ -174,7 +174,7 @@ export function WatchlistPanel({ tmdbId, title, mediaType, posterPath, backdropP
 
     startTransition(async () => {
       try {
-        await updateWatchlistMeta({ tmdbId, favorite: nextFavorite });
+        await updateWatchlistMeta({ tmdbId, mediaType, favorite: nextFavorite });
         setItem((prev) =>
           prev
             ? {

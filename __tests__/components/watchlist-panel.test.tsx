@@ -25,7 +25,7 @@ describe("WatchlistPanel", () => {
   const defaultProps = {
     tmdbId: 12345,
     title: "Test Movie",
-    mediaType: "movie",
+    mediaType: "movie" as const,
     posterPath: "/poster.jpg",
     backdropPath: "/backdrop.jpg",
   };
@@ -210,6 +210,7 @@ describe("WatchlistPanel", () => {
       await waitFor(() => {
         expect(mockUpdateWatchlistMeta).toHaveBeenCalledWith({
           tmdbId: 12345,
+          mediaType: "movie",
           favorite: true,
         });
       });
@@ -365,7 +366,7 @@ describe("WatchlistPanel", () => {
       fireEvent.click(screen.getByRole("button", { name: /remove/i }));
 
       await waitFor(() => {
-        expect(mockRemoveWatchlistItem).toHaveBeenCalledWith({ tmdbId: 12345 });
+        expect(mockRemoveWatchlistItem).toHaveBeenCalledWith({ tmdbId: 12345, mediaType: "movie" });
       });
     });
 

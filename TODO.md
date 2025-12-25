@@ -14,28 +14,253 @@
 - [x] **Update dependencies (Dec 2024)** – Updated Next.js 16.1.1, React 19.2.3, lucide-react 0.562.0, @supabase/supabase-js 2.89.0, and other packages
 - [x] **Upgrade to Prisma 7** – Migrated to new config-based architecture with driver adapters
 - [x] **Remove Cloudflare Turnstile** – Removed challenge page, Turnstile API routes, and captcha from auth forms (Dec 2024)
+- [x] **Codebase modernization** – Removed unused SWR, boilerplate SVGs, updated tsconfig to ES2022
 
-## In Progress
+---
 
-- [ ] **Document launch/debug paths**
-  - Update README.md with auth setup instructions
-  - Add Prisma migrate notes
-  - Include start/debug instructions for VS Code
+## 🎨 Major Redesign Project (Dec 2024)
 
-## Pending
+### Overview
+Complete UI overhaul to match new design system, expand from movies-only to include TV Shows, implement search and filtering functionality.
 
-- [ ] **Add profile editing features**
-  - Edit/delete watchlist items from profile
-  - Category filtering and badges
-  - Sorting options (date, title, favorites)
+---
 
-## Future Ideas
+### Phase 1: Foundation & Data Layer ✅ COMPLETE
 
-- [ ] Add search functionality
-- [ ] Implement TV show support
-- [ ] Add social sharing features
-- [ ] Create mobile-responsive improvements
-- [ ] Add pagination to watchlist
+- [x] **Extend TMDB API layer for TV Shows**
+  - Added `getTrendingTV()`, `getPopularTV()`, `getTopRatedTV()`, `getOnTheAirTV()`, `getAiringTodayTV()` functions
+  - Added `getTVDetails(id)` and `getTVRecommendations(id)`, `getSimilarTV(id)` functions
+  - Created unified `MediaSummary` type and `TVShowDetail` TypeScript interface
+  - Added `getGenres(type)`, `getMovieGenres()`, `getTVGenres()` for filter options
+  - Added `discoverMovies()` and `discoverTV()` for advanced filtering
+
+- [x] **Add Search API functions**
+  - Implemented `searchMulti(query)` for combined movie/TV search
+  - Implemented `searchMovies(query, filters)` with genre/date filtering
+  - Implemented `searchTV(query, filters)` with genre/date filtering
+  - Added `SearchFilters` type for flexible filter parameters
+
+- [x] **Update Prisma schema for TV Shows**
+  - Updated unique constraint to `@@unique([userId, tmdbId, mediaType])` to support both movies and TV
+  - Updated all watchlist actions to require `mediaType` parameter
+  - Added `getUserWatchlist()` filtering by `mediaType`, `sortBy`, `favoritesOnly`
+  - Added `getWatchlistCounts()` for stats by media type
+  - Updated `WatchlistPanel` component and all tests
+
+---
+
+### Phase 2: Navigation & Layout
+
+- [ ] **Redesign header/navigation**
+  - Add "Movies" and "TV Shows" nav links
+  - Add search bar with icon in header
+  - Update logo/branding style
+  - Add "Login" button styling (purple/gradient)
+  - Responsive mobile menu
+
+- [ ] **Redesign footer**
+  - Multi-column layout with links
+  - TMDB logo and description
+  - Sections: The Basics, Get Involved, Community, Legal
+
+---
+
+### Phase 3: Home Page Redesign
+
+- [ ] **New hero section**
+  - Large backdrop image with gradient overlay
+  - Genre badges (e.g., "SCI-FI"), Year, Rating badge
+  - Large gradient title text
+  - Movie/show description
+  - "Watch Trailer" and "More Info" buttons
+
+- [ ] **Redesigned content sections**
+  - "Trending Now" with horizontal scroll
+  - "What's Popular" section
+  - "Coming Soon" with release date badges
+  - Section headers with "View All" links
+  - Purple accent bar on section titles
+
+- [ ] **Updated media cards**
+  - Rating badge overlay (top-right)
+  - Title and genre tags below poster
+  - Hover effects and transitions
+
+---
+
+### Phase 4: Browse Pages with Filters
+
+- [ ] **Create Movies browse page (`/movies`)**
+  - Left sidebar with filters
+  - Sort dropdown (Popularity, Rating, Release Date)
+  - Genre filter chips (multi-select)
+  - Release date range picker
+  - "Reset Filters" button
+  - Grid of movie cards with ratings
+  - "Load More" pagination button
+
+- [ ] **Create TV Shows browse page (`/tv`)**
+  - Same filter sidebar pattern
+  - TV-specific genres
+  - Air date filters
+  - Grid of TV show cards
+
+- [ ] **Trending toggle component**
+  - "Today" / "This Week" toggle buttons
+  - Updates content dynamically
+
+---
+
+### Phase 5: Search Functionality
+
+- [ ] **Global search component**
+  - Search input in header
+  - Dropdown with instant results
+  - Categories: Movies, TV Shows
+  - "View all results" link
+
+- [ ] **Search results page (`/search`)**
+  - Query parameter handling
+  - Tabbed results (All, Movies, TV Shows)
+  - Filter sidebar for refining results
+  - Pagination
+
+---
+
+### Phase 6: Detail Pages Redesign
+
+- [ ] **Movie detail page redesign**
+  - Two-column layout (info left, poster right)
+  - Backdrop with blur effect
+  - Title, tagline, metadata row (date, runtime, rating)
+  - "Play Trailer" button
+  - Genre badges
+  - Overview section
+  - Credits section (Director, Screenplay, etc.)
+  - Poster with circular rating badge
+  - Enhanced "Your Activity" panel
+  - "You May Also Like" recommendations
+
+- [ ] **TV Show detail page (`/tv/[id]`)**
+  - Similar layout to movies
+  - Season/episode count
+  - Network/streaming info
+  - Season selector (future enhancement)
+
+---
+
+### Phase 7: Profile Dashboard Redesign
+
+- [ ] **Sidebar navigation**
+  - User avatar and name display
+  - "Edit Profile" button
+  - Nav items: Dashboard, Favorites, Watchlist, History, Reviews
+  - Badge counts on nav items
+
+- [ ] **Stats cards row**
+  - Total Saved (with trend indicator)
+  - Favorites count
+  - Watched progress (percentage bar)
+  - To Watch count
+
+- [ ] **Content filtering**
+  - Filter tabs: All Items, Movies, TV Shows, genre chips
+  - Sort dropdown (Date Added, Title, Rating)
+
+- [ ] **Enhanced watchlist cards**
+  - Poster, title, year, genre, runtime
+  - Note preview with "Add Note" button
+  - Status indicator (Watched, Plan to Watch, Rewatching)
+  - Pagination
+
+---
+
+### Phase 8: Auth Pages Redesign
+
+- [ ] **Sign In page**
+  - Bokeh/bubble animated background
+  - Centered card with border
+  - "Unlock the Universe" heading
+  - Styled form inputs with icons
+  - Purple gradient "Sign In" button
+  - Divider with "Or continue with"
+  - Google and GitHub OAuth buttons
+  - "Create an account" link
+
+- [ ] **Sign Up page**
+  - Same bokeh background
+  - Password requirements checklist (visual checkmarks)
+  - Terms of Service agreement text
+  - "Create Account" button
+
+- [ ] **Reset Password page**
+  - Blurred movie posters background
+  - Password strength meter (visual bar)
+  - Confirm password field
+  - "Update Password" button
+
+---
+
+### Phase 9: Shared Components
+
+- [ ] **Media card component** (unified for movies/TV)
+  - Configurable for different layouts
+  - Rating badge variants (percentage, star)
+  - Genre chips
+  - Release date badge option
+
+- [ ] **Filter sidebar component**
+  - Reusable across browse pages
+  - Genre chips with selection state
+  - Date range picker
+  - Sort dropdown
+
+- [ ] **Rating circle component**
+  - Circular progress with percentage
+  - Color coding (green/yellow/red)
+
+- [ ] **Section header component**
+  - Title with accent bar
+  - Optional "View All" link
+  - Optional toggle buttons
+
+---
+
+### Phase 10: Polish & Animations
+
+- [ ] **Micro-interactions**
+  - Button hover effects
+  - Card hover scale/shadow
+  - Page transitions
+  - Loading skeletons
+
+- [ ] **Background effects**
+  - Bokeh/bubble effect for auth pages
+  - Gradient overlays on hero sections
+  - Blur effects on backdrops
+
+---
+
+## Design System Reference
+
+### Colors
+- Primary Purple: `#6366f1` (indigo-500)
+- Background: `#020617` (slate-950)
+- Card Background: `rgba(0,0,0,0.4)` with border `rgba(255,255,255,0.1)`
+- Accent Yellow: For ratings/favorites
+- Text: White with opacity variants (100%, 80%, 60%, 40%)
+
+### Typography
+- Headings: Bold, large sizes
+- Gradient text for hero titles
+- Uppercase tracking for labels
+
+### Components
+- Rounded corners: `rounded-lg` to `rounded-2xl`
+- Borders: `border-white/10`
+- Buttons: Solid purple gradient or ghost with border
+
+---
 
 ## Package Status (as of Dec 2024)
 
@@ -47,12 +272,26 @@
 | prisma / @prisma/client  | 7.2.0   | 7.2.0  | ✅ Up to date         |
 | @types/node              | 24.10.4 | 25.0.3 | ⚠️ Node 25 not GA yet |
 
-## Prisma 7 Migration Notes
+---
 
-The project was upgraded to Prisma 7 with the following changes:
+## Implementation Order (Recommended)
 
-1. **Schema (`prisma/schema.prisma`)**: Generator changed from `prisma-client-js` to `prisma-client` with mandatory `output` field
-2. **Config (`prisma.config.ts`)**: New config file for CLI operations (migrations) with datasource URL
-3. **Driver Adapter**: Using `@prisma/adapter-pg` for PostgreSQL connections
-4. **Imports**: Changed from `@prisma/client` to `@/generated/prisma/client`
-5. **Generated Client**: Output at `./generated/prisma/`
+1. **Phase 1** - Data layer (TV shows, search APIs)
+2. **Phase 2** - Navigation redesign
+3. **Phase 8** - Auth pages (quick visual win)
+4. **Phase 3** - Home page redesign
+5. **Phase 9** - Shared components
+6. **Phase 6** - Detail pages
+7. **Phase 4** - Browse pages with filters
+8. **Phase 5** - Search functionality
+9. **Phase 7** - Profile dashboard
+10. **Phase 10** - Polish & animations
+
+---
+
+## Notes
+
+- All new pages should follow the established dark theme
+- Maintain accessibility standards (contrast, focus states)
+- Mobile-first responsive design
+- Reuse components across Movies/TV where possible
