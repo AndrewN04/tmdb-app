@@ -12,7 +12,9 @@ export interface FetchTmdbOptions {
 
 function ensureApiKey() {
   if (!TMDB_API_KEY) {
-    throw new Error("TMDB_API_KEY is not configured. Set it in your environment before running the app.");
+    throw new Error(
+      "TMDB_API_KEY is not configured. Set it in your environment before running the app."
+    );
   }
 
   return TMDB_API_KEY;
@@ -54,7 +56,10 @@ async function readBody(res: Response) {
   }
 }
 
-export async function fetchTmdb<T>(endpoint: string, options: FetchTmdbOptions = {}): Promise<T> {
+export async function fetchTmdb<T>(
+  endpoint: string,
+  options: FetchTmdbOptions = {}
+): Promise<T> {
   const apiKey = ensureApiKey();
   const normalized = endpoint.replace(/^\/+/, "");
   const url = new URL(`${TMDB_BASE_URL}/${normalized}`);

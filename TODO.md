@@ -21,6 +21,7 @@
 ## 🎨 Major Redesign Project (Dec 2024)
 
 ### Overview
+
 Complete UI overhaul to match new design system, expand from movies-only to include TV Shows, implement search and filtering functionality.
 
 ---
@@ -51,17 +52,15 @@ Complete UI overhaul to match new design system, expand from movies-only to incl
 
 ### Phase 2: Navigation & Layout
 
-- [ ] **Redesign header/navigation**
-  - Add "Movies" and "TV Shows" nav links
-  - Add search bar with icon in header
-  - Update logo/branding style
-  - Add "Login" button styling (purple/gradient)
-  - Responsive mobile menu
+- [x] **Redesign header/navigation**
+  - [x] Add "Movies" and "TV Shows" nav links
+  - [x] Add search bar with icon in header
+  - [x] Update logo/branding style
+  - [x] Add "Login" button styling (purple/gradient)
+  - [x] Responsive mobile menu
 
-- [ ] **Redesign footer**
-  - Multi-column layout with links
-  - TMDB logo and description
-  - Sections: The Basics, Get Involved, Community, Legal
+- [x] **Redesign footer**
+  - [x] Display tech stack used for the project
 
 ---
 
@@ -244,6 +243,7 @@ Complete UI overhaul to match new design system, expand from movies-only to incl
 ## Design System Reference
 
 ### Colors
+
 - Primary Purple: `#6366f1` (indigo-500)
 - Background: `#020617` (slate-950)
 - Card Background: `rgba(0,0,0,0.4)` with border `rgba(255,255,255,0.1)`
@@ -251,11 +251,13 @@ Complete UI overhaul to match new design system, expand from movies-only to incl
 - Text: White with opacity variants (100%, 80%, 60%, 40%)
 
 ### Typography
+
 - Headings: Bold, large sizes
 - Gradient text for hero titles
 - Uppercase tracking for labels
 
 ### Components
+
 - Rounded corners: `rounded-lg` to `rounded-2xl`
 - Borders: `border-white/10`
 - Buttons: Solid purple gradient or ghost with border
@@ -264,13 +266,13 @@ Complete UI overhaul to match new design system, expand from movies-only to incl
 
 ## Package Status (as of Dec 2024)
 
-| Package                  | Current | Latest | Notes                 |
-|--------------------------|---------|--------|-----------------------|
-| next                     | 16.1.1  | 16.1.1 | ✅ Up to date         |
-| react                    | 19.2.3  | 19.2.3 | ✅ Up to date         |
-| @supabase/ssr            | 0.8.0   | 0.8.0  | ✅ Up to date         |
-| prisma / @prisma/client  | 7.2.0   | 7.2.0  | ✅ Up to date         |
-| @types/node              | 24.10.4 | 25.0.3 | ⚠️ Node 25 not GA yet |
+| Package                 | Current | Latest | Notes                 |
+| ----------------------- | ------- | ------ | --------------------- |
+| next                    | 16.1.1  | 16.1.1 | ✅ Up to date         |
+| react                   | 19.2.3  | 19.2.3 | ✅ Up to date         |
+| @supabase/ssr           | 0.8.0   | 0.8.0  | ✅ Up to date         |
+| prisma / @prisma/client | 7.2.0   | 7.2.0  | ✅ Up to date         |
+| @types/node             | 24.10.4 | 25.0.3 | ⚠️ Node 25 not GA yet |
 
 ---
 

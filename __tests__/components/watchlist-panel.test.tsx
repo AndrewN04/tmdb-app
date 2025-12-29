@@ -56,7 +56,9 @@ describe("WatchlistPanel", () => {
       render(<WatchlistPanel {...defaultProps} />);
 
       await waitFor(() => {
-        expect(screen.getByText("Sign in to manage your watchlist")).toBeInTheDocument();
+        expect(
+          screen.getByText("Sign in to manage your watchlist")
+        ).toBeInTheDocument();
       });
     });
 
@@ -73,8 +75,12 @@ describe("WatchlistPanel", () => {
       render(<WatchlistPanel {...defaultProps} />);
 
       await waitFor(() => {
-        expect(screen.queryByPlaceholderText(/thoughts/i)).not.toBeInTheDocument();
-        expect(screen.queryByPlaceholderText(/comma separated/i)).not.toBeInTheDocument();
+        expect(
+          screen.queryByPlaceholderText(/thoughts/i)
+        ).not.toBeInTheDocument();
+        expect(
+          screen.queryByPlaceholderText(/comma separated/i)
+        ).not.toBeInTheDocument();
       });
     });
   });
@@ -99,7 +105,9 @@ describe("WatchlistPanel", () => {
       render(<WatchlistPanel {...defaultProps} />);
 
       await waitFor(() => {
-        expect(screen.getByText("Save personal notes and tags")).toBeInTheDocument();
+        expect(
+          screen.getByText("Save personal notes and tags")
+        ).toBeInTheDocument();
       });
     });
 
@@ -107,7 +115,9 @@ describe("WatchlistPanel", () => {
       render(<WatchlistPanel {...defaultProps} />);
 
       await waitFor(() => {
-        expect(screen.getByRole("button", { name: /add to watchlist/i })).toBeInTheDocument();
+        expect(
+          screen.getByRole("button", { name: /add to watchlist/i })
+        ).toBeInTheDocument();
       });
     });
 
@@ -124,7 +134,9 @@ describe("WatchlistPanel", () => {
       render(<WatchlistPanel {...defaultProps} />);
 
       await waitFor(() => {
-        expect(screen.getByRole("button", { name: /mark as favorite/i })).toBeInTheDocument();
+        expect(
+          screen.getByRole("button", { name: /mark as favorite/i })
+        ).toBeInTheDocument();
       });
     });
   });
@@ -141,7 +153,9 @@ describe("WatchlistPanel", () => {
       render(<WatchlistPanel {...defaultProps} />);
 
       await waitFor(() => {
-        expect(screen.getByText("You are tracking this title")).toBeInTheDocument();
+        expect(
+          screen.getByText("You are tracking this title")
+        ).toBeInTheDocument();
       });
     });
 
@@ -167,7 +181,9 @@ describe("WatchlistPanel", () => {
       render(<WatchlistPanel {...defaultProps} />);
 
       await waitFor(() => {
-        expect(screen.getByRole("button", { name: /update watchlist/i })).toBeInTheDocument();
+        expect(
+          screen.getByRole("button", { name: /update watchlist/i })
+        ).toBeInTheDocument();
       });
     });
 
@@ -202,10 +218,14 @@ describe("WatchlistPanel", () => {
       render(<WatchlistPanel {...defaultProps} />);
 
       await waitFor(() => {
-        expect(screen.getByRole("button", { name: /mark as favorite/i })).toBeInTheDocument();
+        expect(
+          screen.getByRole("button", { name: /mark as favorite/i })
+        ).toBeInTheDocument();
       });
 
-      fireEvent.click(screen.getByRole("button", { name: /mark as favorite/i }));
+      fireEvent.click(
+        screen.getByRole("button", { name: /mark as favorite/i })
+      );
 
       await waitFor(() => {
         expect(mockUpdateWatchlistMeta).toHaveBeenCalledWith({
@@ -220,7 +240,9 @@ describe("WatchlistPanel", () => {
       render(<WatchlistPanel {...defaultProps} />);
 
       await waitFor(() => {
-        fireEvent.click(screen.getByRole("button", { name: /mark as favorite/i }));
+        fireEvent.click(
+          screen.getByRole("button", { name: /mark as favorite/i })
+        );
       });
 
       await waitFor(() => {
@@ -237,7 +259,9 @@ describe("WatchlistPanel", () => {
       render(<WatchlistPanel {...defaultProps} />);
 
       await waitFor(() => {
-        fireEvent.click(screen.getByRole("button", { name: /mark as favorite/i }));
+        fireEvent.click(
+          screen.getByRole("button", { name: /mark as favorite/i })
+        );
       });
 
       expect(screen.getByText("Will favorite once saved")).toBeInTheDocument();
@@ -249,7 +273,9 @@ describe("WatchlistPanel", () => {
       render(<WatchlistPanel {...defaultProps} />);
 
       await waitFor(() => {
-        fireEvent.click(screen.getByRole("button", { name: /mark as favorite/i }));
+        fireEvent.click(
+          screen.getByRole("button", { name: /mark as favorite/i })
+        );
       });
 
       await waitFor(() => {
@@ -287,7 +313,9 @@ describe("WatchlistPanel", () => {
       await user.type(notesTextarea, "My notes");
       await user.type(categoriesInput, "drama, comedy");
 
-      fireEvent.click(screen.getByRole("button", { name: /add to watchlist/i }));
+      fireEvent.click(
+        screen.getByRole("button", { name: /add to watchlist/i })
+      );
 
       await waitFor(() => {
         expect(mockSaveWatchlistItem).toHaveBeenCalledWith({
@@ -307,7 +335,9 @@ describe("WatchlistPanel", () => {
       render(<WatchlistPanel {...defaultProps} />);
 
       await waitFor(() => {
-        fireEvent.click(screen.getByRole("button", { name: /add to watchlist/i }));
+        fireEvent.click(
+          screen.getByRole("button", { name: /add to watchlist/i })
+        );
       });
 
       await waitFor(() => {
@@ -324,7 +354,9 @@ describe("WatchlistPanel", () => {
       render(<WatchlistPanel {...defaultProps} />);
 
       await waitFor(() => {
-        fireEvent.click(screen.getByRole("button", { name: /update watchlist/i }));
+        fireEvent.click(
+          screen.getByRole("button", { name: /update watchlist/i })
+        );
       });
 
       await waitFor(() => {
@@ -338,7 +370,9 @@ describe("WatchlistPanel", () => {
       render(<WatchlistPanel {...defaultProps} />);
 
       await waitFor(() => {
-        fireEvent.click(screen.getByRole("button", { name: /add to watchlist/i }));
+        fireEvent.click(
+          screen.getByRole("button", { name: /add to watchlist/i })
+        );
       });
 
       await waitFor(() => {
@@ -360,13 +394,18 @@ describe("WatchlistPanel", () => {
       render(<WatchlistPanel {...defaultProps} />);
 
       await waitFor(() => {
-        expect(screen.getByRole("button", { name: /remove/i })).toBeInTheDocument();
+        expect(
+          screen.getByRole("button", { name: /remove/i })
+        ).toBeInTheDocument();
       });
 
       fireEvent.click(screen.getByRole("button", { name: /remove/i }));
 
       await waitFor(() => {
-        expect(mockRemoveWatchlistItem).toHaveBeenCalledWith({ tmdbId: 12345, mediaType: "movie" });
+        expect(mockRemoveWatchlistItem).toHaveBeenCalledWith({
+          tmdbId: 12345,
+          mediaType: "movie",
+        });
       });
     });
 
@@ -386,7 +425,9 @@ describe("WatchlistPanel", () => {
       render(<WatchlistPanel {...defaultProps} />);
 
       await waitFor(() => {
-        expect(screen.getByPlaceholderText(/thoughts/i)).toHaveValue("Great movie");
+        expect(screen.getByPlaceholderText(/thoughts/i)).toHaveValue(
+          "Great movie"
+        );
       });
 
       fireEvent.click(screen.getByRole("button", { name: /remove/i }));
@@ -419,7 +460,11 @@ describe("WatchlistPanel", () => {
         () =>
           new Promise((resolve) => {
             // Simulate async loading by waiting before resolving
-            setTimeout(() => resolve({ user: { email: "test@example.com" }, item: null }), 100);
+            setTimeout(
+              () =>
+                resolve({ user: { email: "test@example.com" }, item: null }),
+              100
+            );
           })
       );
 
@@ -465,7 +510,9 @@ describe("WatchlistPanel", () => {
       render(<WatchlistPanel {...defaultProps} />);
 
       await waitFor(() => {
-        expect(screen.getByPlaceholderText(/comma separated/i)).toBeInTheDocument();
+        expect(
+          screen.getByPlaceholderText(/comma separated/i)
+        ).toBeInTheDocument();
       });
 
       const input = screen.getByPlaceholderText(/comma separated/i);
@@ -487,7 +534,9 @@ describe("WatchlistPanel", () => {
       render(<WatchlistPanel {...defaultProps} />);
 
       await waitFor(() => {
-        expect(screen.getByPlaceholderText(/comma separated/i)).toBeInTheDocument();
+        expect(
+          screen.getByPlaceholderText(/comma separated/i)
+        ).toBeInTheDocument();
       });
 
       const input = screen.getByPlaceholderText(/comma separated/i);
@@ -507,7 +556,9 @@ describe("WatchlistPanel", () => {
       render(<WatchlistPanel {...defaultProps} />);
 
       await waitFor(() => {
-        expect(screen.getByRole("button", { name: /^favorite$/i })).toBeInTheDocument();
+        expect(
+          screen.getByRole("button", { name: /^favorite$/i })
+        ).toBeInTheDocument();
       });
     });
 

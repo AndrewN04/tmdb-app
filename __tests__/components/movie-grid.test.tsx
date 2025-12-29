@@ -10,7 +10,13 @@ import type { MovieSummary } from "@/lib/tmdb";
 
 // Mock MovieCard to simplify testing
 vi.mock("@/components/movie-card", () => ({
-  MovieCard: ({ movie, priority }: { movie: MovieSummary; priority: boolean }) => (
+  MovieCard: ({
+    movie,
+    priority,
+  }: {
+    movie: MovieSummary;
+    priority: boolean;
+  }) => (
     <div data-testid={`movie-card-${movie.id}`} data-priority={priority}>
       {movie.title}
     </div>
@@ -62,38 +68,80 @@ describe("MovieGrid", () => {
       const movies = createMovies(6);
       render(<MovieGrid items={movies} />);
 
-      expect(screen.getByTestId("movie-card-1")).toHaveAttribute("data-priority", "true");
-      expect(screen.getByTestId("movie-card-2")).toHaveAttribute("data-priority", "true");
-      expect(screen.getByTestId("movie-card-3")).toHaveAttribute("data-priority", "true");
-      expect(screen.getByTestId("movie-card-4")).toHaveAttribute("data-priority", "true");
-      expect(screen.getByTestId("movie-card-5")).toHaveAttribute("data-priority", "false");
-      expect(screen.getByTestId("movie-card-6")).toHaveAttribute("data-priority", "false");
+      expect(screen.getByTestId("movie-card-1")).toHaveAttribute(
+        "data-priority",
+        "true"
+      );
+      expect(screen.getByTestId("movie-card-2")).toHaveAttribute(
+        "data-priority",
+        "true"
+      );
+      expect(screen.getByTestId("movie-card-3")).toHaveAttribute(
+        "data-priority",
+        "true"
+      );
+      expect(screen.getByTestId("movie-card-4")).toHaveAttribute(
+        "data-priority",
+        "true"
+      );
+      expect(screen.getByTestId("movie-card-5")).toHaveAttribute(
+        "data-priority",
+        "false"
+      );
+      expect(screen.getByTestId("movie-card-6")).toHaveAttribute(
+        "data-priority",
+        "false"
+      );
     });
 
     it("should respect custom priorityCount", () => {
       const movies = createMovies(5);
       render(<MovieGrid items={movies} priorityCount={2} />);
 
-      expect(screen.getByTestId("movie-card-1")).toHaveAttribute("data-priority", "true");
-      expect(screen.getByTestId("movie-card-2")).toHaveAttribute("data-priority", "true");
-      expect(screen.getByTestId("movie-card-3")).toHaveAttribute("data-priority", "false");
+      expect(screen.getByTestId("movie-card-1")).toHaveAttribute(
+        "data-priority",
+        "true"
+      );
+      expect(screen.getByTestId("movie-card-2")).toHaveAttribute(
+        "data-priority",
+        "true"
+      );
+      expect(screen.getByTestId("movie-card-3")).toHaveAttribute(
+        "data-priority",
+        "false"
+      );
     });
 
     it("should handle priorityCount of 0", () => {
       const movies = createMovies(3);
       render(<MovieGrid items={movies} priorityCount={0} />);
 
-      expect(screen.getByTestId("movie-card-1")).toHaveAttribute("data-priority", "false");
-      expect(screen.getByTestId("movie-card-2")).toHaveAttribute("data-priority", "false");
-      expect(screen.getByTestId("movie-card-3")).toHaveAttribute("data-priority", "false");
+      expect(screen.getByTestId("movie-card-1")).toHaveAttribute(
+        "data-priority",
+        "false"
+      );
+      expect(screen.getByTestId("movie-card-2")).toHaveAttribute(
+        "data-priority",
+        "false"
+      );
+      expect(screen.getByTestId("movie-card-3")).toHaveAttribute(
+        "data-priority",
+        "false"
+      );
     });
 
     it("should handle priorityCount larger than items count", () => {
       const movies = createMovies(2);
       render(<MovieGrid items={movies} priorityCount={10} />);
 
-      expect(screen.getByTestId("movie-card-1")).toHaveAttribute("data-priority", "true");
-      expect(screen.getByTestId("movie-card-2")).toHaveAttribute("data-priority", "true");
+      expect(screen.getByTestId("movie-card-1")).toHaveAttribute(
+        "data-priority",
+        "true"
+      );
+      expect(screen.getByTestId("movie-card-2")).toHaveAttribute(
+        "data-priority",
+        "true"
+      );
     });
   });
 
@@ -139,7 +187,7 @@ describe("MovieGrid", () => {
     it("should pass movie data to MovieCard", () => {
       const movies = createMovies(1);
       movies[0].title = "Custom Title";
-      
+
       render(<MovieGrid items={movies} />);
 
       expect(screen.getByText("Custom Title")).toBeInTheDocument();

@@ -3,7 +3,15 @@
  * Covers server actions for watchlist CRUD operations.
  * Tests utility functions and database interactions with mocks.
  */
-import { describe, it, expect, vi, beforeEach, afterEach, type Mock } from "vitest";
+import {
+  describe,
+  it,
+  expect,
+  vi,
+  beforeEach,
+  afterEach,
+  type Mock,
+} from "vitest";
 
 // Define mock functions at module scope for hoisting
 vi.mock("next/cache", () => ({
@@ -70,19 +78,22 @@ describe("watchlist actions", () => {
   const mockPrismaWatchlistItemUpsert = prisma.watchlistItem.upsert as Mock;
   const mockPrismaWatchlistItemUpdate = prisma.watchlistItem.update as Mock;
   const mockPrismaWatchlistItemDelete = prisma.watchlistItem.delete as Mock;
-  const mockPrismaWatchlistItemFindUnique = prisma.watchlistItem.findUnique as Mock;
+  const mockPrismaWatchlistItemFindUnique = prisma.watchlistItem
+    .findUnique as Mock;
   const mockPrismaWatchlistItemFindMany = prisma.watchlistItem.findMany as Mock;
 
   beforeEach(() => {
     vi.clearAllMocks();
-    
+
     // Setup default Supabase mock
     mockCreateSupabaseServerClient.mockResolvedValue({
       auth: {
-        getUser: vi.fn().mockResolvedValue({ data: { user: mockUser }, error: null }),
+        getUser: vi
+          .fn()
+          .mockResolvedValue({ data: { user: mockUser }, error: null }),
       },
     });
-    
+
     mockPrismaUserUpsert.mockResolvedValue(mockUser);
   });
 
@@ -355,7 +366,9 @@ describe("watchlist actions", () => {
     it("should require authentication", async () => {
       mockCreateSupabaseServerClient.mockResolvedValue({
         auth: {
-          getUser: vi.fn().mockResolvedValue({ data: { user: null }, error: null }),
+          getUser: vi
+            .fn()
+            .mockResolvedValue({ data: { user: null }, error: null }),
         },
       });
 
@@ -494,12 +507,18 @@ describe("watchlist actions", () => {
     it("should require authentication", async () => {
       mockCreateSupabaseServerClient.mockResolvedValue({
         auth: {
-          getUser: vi.fn().mockResolvedValue({ data: { user: null }, error: null }),
+          getUser: vi
+            .fn()
+            .mockResolvedValue({ data: { user: null }, error: null }),
         },
       });
 
       await expect(
-        updateWatchlistMeta({ tmdbId: 12345, mediaType: "movie", favorite: true })
+        updateWatchlistMeta({
+          tmdbId: 12345,
+          mediaType: "movie",
+          favorite: true,
+        })
       ).rejects.toThrow("You must be signed in to manage your watchlist");
     });
 
@@ -575,7 +594,11 @@ describe("watchlist actions", () => {
     it("should revalidate paths after update for movie", async () => {
       mockPrismaWatchlistItemUpdate.mockResolvedValue(mockWatchlistItem);
 
-      await updateWatchlistMeta({ tmdbId: 12345, mediaType: "movie", favorite: true });
+      await updateWatchlistMeta({
+        tmdbId: 12345,
+        mediaType: "movie",
+        favorite: true,
+      });
 
       expect(mockRevalidatePath).toHaveBeenCalledWith("/profile");
       expect(mockRevalidatePath).toHaveBeenCalledWith("/movie/12345");
@@ -585,7 +608,11 @@ describe("watchlist actions", () => {
       const tvItem = { ...mockWatchlistItem, mediaType: "tv" };
       mockPrismaWatchlistItemUpdate.mockResolvedValue(tvItem);
 
-      await updateWatchlistMeta({ tmdbId: 12345, mediaType: "tv", favorite: true });
+      await updateWatchlistMeta({
+        tmdbId: 12345,
+        mediaType: "tv",
+        favorite: true,
+      });
 
       expect(mockRevalidatePath).toHaveBeenCalledWith("/profile");
       expect(mockRevalidatePath).toHaveBeenCalledWith("/tv/12345");
@@ -596,13 +623,15 @@ describe("watchlist actions", () => {
     it("should require authentication", async () => {
       mockCreateSupabaseServerClient.mockResolvedValue({
         auth: {
-          getUser: vi.fn().mockResolvedValue({ data: { user: null }, error: null }),
+          getUser: vi
+            .fn()
+            .mockResolvedValue({ data: { user: null }, error: null }),
         },
       });
 
-      await expect(removeWatchlistItem({ tmdbId: 12345, mediaType: "movie" })).rejects.toThrow(
-        "You must be signed in to manage your watchlist"
-      );
+      await expect(
+        removeWatchlistItem({ tmdbId: 12345, mediaType: "movie" })
+      ).rejects.toThrow("You must be signed in to manage your watchlist");
     });
 
     it("should delete watchlist item", async () => {
@@ -642,7 +671,10 @@ describe("watchlist actions", () => {
     it("should return success", async () => {
       mockPrismaWatchlistItemDelete.mockResolvedValue(mockWatchlistItem);
 
-      const result = await removeWatchlistItem({ tmdbId: 12345, mediaType: "movie" });
+      const result = await removeWatchlistItem({
+        tmdbId: 12345,
+        mediaType: "movie",
+      });
 
       expect(result).toEqual({ success: true });
     });
@@ -652,11 +684,16 @@ describe("watchlist actions", () => {
     it("should return empty status when not authenticated", async () => {
       mockCreateSupabaseServerClient.mockResolvedValue({
         auth: {
-          getUser: vi.fn().mockResolvedValue({ data: { user: null }, error: null }),
+          getUser: vi
+            .fn()
+            .mockResolvedValue({ data: { user: null }, error: null }),
         },
       });
 
-      const result = await getWatchlistStatus({ tmdbId: 12345, mediaType: "movie" });
+      const result = await getWatchlistStatus({
+        tmdbId: 12345,
+        mediaType: "movie",
+      });
 
       expect(result).toEqual({ user: null, item: null });
     });
@@ -664,7 +701,10 @@ describe("watchlist actions", () => {
     it("should return user and item when authenticated with item", async () => {
       mockPrismaWatchlistItemFindUnique.mockResolvedValue(mockWatchlistItem);
 
-      const result = await getWatchlistStatus({ tmdbId: 12345, mediaType: "movie" });
+      const result = await getWatchlistStatus({
+        tmdbId: 12345,
+        mediaType: "movie",
+      });
 
       expect(result).toEqual({
         user: {
@@ -682,7 +722,10 @@ describe("watchlist actions", () => {
     it("should return user without item when authenticated but no item exists", async () => {
       mockPrismaWatchlistItemFindUnique.mockResolvedValue(null);
 
-      const result = await getWatchlistStatus({ tmdbId: 12345, mediaType: "movie" });
+      const result = await getWatchlistStatus({
+        tmdbId: 12345,
+        mediaType: "movie",
+      });
 
       expect(result).toEqual({
         user: {
@@ -703,7 +746,10 @@ describe("watchlist actions", () => {
         },
       });
 
-      const result = await getWatchlistStatus({ tmdbId: 12345, mediaType: "movie" });
+      const result = await getWatchlistStatus({
+        tmdbId: 12345,
+        mediaType: "movie",
+      });
 
       expect(result).toEqual({ user: null, item: null });
     });
@@ -718,7 +764,10 @@ describe("watchlist actions", () => {
         },
       });
 
-      const result = await getWatchlistStatus({ tmdbId: 12345, mediaType: "movie" });
+      const result = await getWatchlistStatus({
+        tmdbId: 12345,
+        mediaType: "movie",
+      });
 
       expect(result).toEqual({ user: null, item: null });
     });
@@ -733,9 +782,9 @@ describe("watchlist actions", () => {
         },
       });
 
-      await expect(getWatchlistStatus({ tmdbId: 12345, mediaType: "movie" })).rejects.toThrow(
-        "Invalid credentials"
-      );
+      await expect(
+        getWatchlistStatus({ tmdbId: 12345, mediaType: "movie" })
+      ).rejects.toThrow("Invalid credentials");
     });
   });
 
@@ -743,7 +792,9 @@ describe("watchlist actions", () => {
     it("should return empty array when not authenticated", async () => {
       mockCreateSupabaseServerClient.mockResolvedValue({
         auth: {
-          getUser: vi.fn().mockResolvedValue({ data: { user: null }, error: null }),
+          getUser: vi
+            .fn()
+            .mockResolvedValue({ data: { user: null }, error: null }),
         },
       });
 

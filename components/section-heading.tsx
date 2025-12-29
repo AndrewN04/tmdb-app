@@ -6,7 +6,11 @@ interface SectionHeadingProps {
   actionSlot?: ReactNode;
 }
 
-export function SectionHeading({ title, description, actionSlot }: SectionHeadingProps) {
+export function SectionHeading({
+  title,
+  description,
+  actionSlot,
+}: SectionHeadingProps) {
   return (
     <div className="flex flex-wrap items-end justify-between gap-4">
       <div>

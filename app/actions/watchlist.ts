@@ -21,13 +21,11 @@ export interface WatchlistStatusResult {
     id: string;
     email: string | null;
   } | null;
-  item:
-    | {
-        favorite: boolean;
-        notes: string | null;
-        categories: string[];
-      }
-    | null;
+  item: {
+    favorite: boolean;
+    notes: string | null;
+    categories: string[];
+  } | null;
 }
 
 const EMPTY_STATUS: WatchlistStatusResult = { user: null, item: null };
@@ -168,8 +166,12 @@ export async function updateWatchlistMeta(input: WatchlistMetaInput) {
 
   const tmdbId = coerceTmdbId(input.tmdbId);
   const mediaType = validateMediaType(input.mediaType);
-  const notes = input.notes === undefined ? undefined : sanitizeNotes(input.notes);
-  const categories = input.categories === undefined ? undefined : sanitizeCategories(input.categories);
+  const notes =
+    input.notes === undefined ? undefined : sanitizeNotes(input.notes);
+  const categories =
+    input.categories === undefined
+      ? undefined
+      : sanitizeCategories(input.categories);
 
   const item = await prisma.watchlistItem.update({
     where: {
@@ -209,7 +211,8 @@ export async function removeWatchlistItem(input: BaseWatchlistInput) {
     });
   } catch (error) {
     const isMissingRecord =
-      error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025";
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2025";
 
     if (!isMissingRecord) {
       throw error;
@@ -220,7 +223,9 @@ export async function removeWatchlistItem(input: BaseWatchlistInput) {
   return { success: true };
 }
 
-export async function getWatchlistStatus(input: BaseWatchlistInput): Promise<WatchlistStatusResult> {
+export async function getWatchlistStatus(
+  input: BaseWatchlistInput
+): Promise<WatchlistStatusResult> {
   try {
     const supabase = await createSupabaseServerClient();
     const { data, error } = await supabase.auth.getUser();
@@ -239,7 +244,7 @@ export async function getWatchlistStatus(input: BaseWatchlistInput): Promise<Wat
 
     const tmdbId = coerceTmdbId(input.tmdbId);
     const mediaType = validateMediaType(input.mediaType);
-    
+
     const record = await prisma.watchlistItem.findUnique({
       where: {
         userId_tmdbId_mediaType: {
@@ -283,7 +288,10 @@ function isRecoverableNetworkError(error: unknown): boolean {
   }
 
   const code = getNodeErrorCode(error);
-  if (code && ["ETIMEDOUT", "ECONNRESET", "ECONNREFUSED", "ENOTFOUND"].includes(code)) {
+  if (
+    code &&
+    ["ETIMEDOUT", "ECONNRESET", "ECONNREFUSED", "ENOTFOUND"].includes(code)
+  ) {
     return true;
   }
 
@@ -321,7 +329,9 @@ export interface GetUserWatchlistOptions {
   favoritesOnly?: boolean;
 }
 
-export async function getUserWatchlist(options: GetUserWatchlistOptions = {}): Promise<WatchlistItemData[]> {
+export async function getUserWatchlist(
+  options: GetUserWatchlistOptions = {}
+): Promise<WatchlistItemData[]> {
   try {
     const supabase = await createSupabaseServerClient();
     const { data, error } = await supabase.auth.getUser();
@@ -330,14 +340,14 @@ export async function getUserWatchlist(options: GetUserWatchlistOptions = {}): P
       return [];
     }
 
-    const { 
-      mediaType = "all", 
-      sortBy = "createdAt", 
+    const {
+      mediaType = "all",
+      sortBy = "createdAt",
       sortOrder = "desc",
-      favoritesOnly = false 
+      favoritesOnly = false,
     } = options;
 
-    const where: Prisma.WatchlistItemWhereInput = { 
+    const where: Prisma.WatchlistItemWhereInput = {
       userId: data.user.id,
       ...(mediaType !== "all" && { mediaType }),
       ...(favoritesOnly && { favorite: true }),
@@ -368,7 +378,12 @@ export async function getUserWatchlist(options: GetUserWatchlistOptions = {}): P
 }
 
 /** Get count of items in watchlist by media type */
-export async function getWatchlistCounts(): Promise<{ movies: number; tv: number; total: number; favorites: number }> {
+export async function getWatchlistCounts(): Promise<{
+  movies: number;
+  tv: number;
+  total: number;
+  favorites: number;
+}> {
   try {
     const supabase = await createSupabaseServerClient();
     const { data, error } = await supabase.auth.getUser();

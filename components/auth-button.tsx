@@ -44,16 +44,14 @@ export function AuthButton() {
   };
 
   if (isLoading) {
-    return (
-      <div className="h-8 w-8 animate-pulse rounded-full bg-white/10" />
-    );
+    return <div className="h-8 w-8 animate-pulse rounded-full bg-white/10" />;
   }
 
   if (!user) {
     return (
       <Link
         href="/sign-in"
-        className="rounded-lg bg-white px-4 py-2 text-sm font-medium text-black transition hover:bg-white/90"
+        className="rounded-full bg-linear-to-r from-blue-600 to-purple-600 px-6 py-2 text-sm font-medium text-white transition-all hover:from-blue-500 hover:to-purple-500 hover:shadow-lg hover:shadow-blue-500/25"
       >
         Sign In
       </Link>
@@ -61,7 +59,8 @@ export function AuthButton() {
   }
 
   const avatarUrl = user.user_metadata?.avatar_url;
-  const name = user.user_metadata?.full_name || user.user_metadata?.name || user.email;
+  const name =
+    user.user_metadata?.full_name || user.user_metadata?.name || user.email;
 
   return (
     <div className="relative">
@@ -93,7 +92,7 @@ export function AuthButton() {
           />
 
           {/* Dropdown menu */}
-          <div className="absolute right-0 top-full z-50 mt-2 w-56 rounded-lg border border-white/10 bg-slate-900 py-2 shadow-xl backdrop-blur-none">
+          <div className="absolute top-full right-0 z-50 mt-2 w-56 rounded-lg border border-white/10 bg-slate-900 py-2 shadow-xl backdrop-blur-none">
             <div className="border-b border-white/10 px-4 py-2">
               <p className="truncate text-sm font-medium">{name}</p>
               <p className="truncate text-xs text-white/60">{user.email}</p>

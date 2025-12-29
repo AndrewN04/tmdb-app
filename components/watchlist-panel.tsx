@@ -1,7 +1,14 @@
 "use client";
 
 import { useEffect, useMemo, useState, useTransition } from "react";
-import { BookmarkCheck, BookmarkPlus, Loader2, RefreshCw, Star, Trash2 } from "lucide-react";
+import {
+  BookmarkCheck,
+  BookmarkPlus,
+  Loader2,
+  RefreshCw,
+  Star,
+  Trash2,
+} from "lucide-react";
 import clsx from "clsx";
 
 import {
@@ -25,7 +32,13 @@ interface WatchlistSnapshot {
   categories: string[];
 }
 
-export function WatchlistPanel({ tmdbId, title, mediaType, posterPath, backdropPath }: WatchlistPanelProps) {
+export function WatchlistPanel({
+  tmdbId,
+  title,
+  mediaType,
+  posterPath,
+  backdropPath,
+}: WatchlistPanelProps) {
   const [sessionEmail, setSessionEmail] = useState<string | null>(null);
   const [item, setItem] = useState<WatchlistSnapshot | null>(null);
   const [notes, setNotes] = useState("");
@@ -89,7 +102,9 @@ export function WatchlistPanel({ tmdbId, title, mediaType, posterPath, backdropP
         }
       } catch (err) {
         if (!cancelled) {
-          setLoadError(err instanceof Error ? err.message : "Failed to load status");
+          setLoadError(
+            err instanceof Error ? err.message : "Failed to load status"
+          );
         }
       } finally {
         if (!cancelled) {
@@ -174,7 +189,11 @@ export function WatchlistPanel({ tmdbId, title, mediaType, posterPath, backdropP
 
     startTransition(async () => {
       try {
-        await updateWatchlistMeta({ tmdbId, mediaType, favorite: nextFavorite });
+        await updateWatchlistMeta({
+          tmdbId,
+          mediaType,
+          favorite: nextFavorite,
+        });
         setItem((prev) =>
           prev
             ? {
@@ -196,13 +215,19 @@ export function WatchlistPanel({ tmdbId, title, mediaType, posterPath, backdropP
     <section className="rounded-2xl border border-white/10 bg-black/30 p-6">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-xs uppercase tracking-[0.3em] text-white/60">Watchlist</p>
+          <p className="text-xs tracking-[0.3em] text-white/60 uppercase">
+            Watchlist
+          </p>
           {isAuthenticated ? (
             <p className="text-sm text-white/70">
-              {hasItem ? "You are tracking this title" : "Save personal notes and tags"}
+              {hasItem
+                ? "You are tracking this title"
+                : "Save personal notes and tags"}
             </p>
           ) : (
-            <p className="text-sm text-white/70">Sign in to manage your watchlist</p>
+            <p className="text-sm text-white/70">
+              Sign in to manage your watchlist
+            </p>
           )}
         </div>
         {isAuthenticated && sessionEmail && (
@@ -228,23 +253,32 @@ export function WatchlistPanel({ tmdbId, title, mediaType, posterPath, backdropP
             )}
             disabled={isPending}
           >
-            <Star className={clsx("h-4 w-4", favorite ? "text-yellow-300" : "text-white/70")} />
+            <Star
+              className={clsx(
+                "h-4 w-4",
+                favorite ? "text-yellow-300" : "text-white/70"
+              )}
+            />
             {favorite ? "Favorite" : "Mark as favorite"}
           </button>
 
           <div className="space-y-2">
-            <label className="text-xs uppercase tracking-[0.2em] text-white/50">Notes</label>
+            <label className="text-xs tracking-[0.2em] text-white/50 uppercase">
+              Notes
+            </label>
             <textarea
               value={notes}
               onChange={(event) => setNotes(event.target.value)}
               placeholder="Thoughts, reminders, who recommended it..."
-              className="min-h-[120px] w-full rounded-xl border border-white/10 bg-black/40 p-3 text-sm text-white placeholder:text-white/40 focus:border-white/40 focus:outline-none"
+              className="min-h-30 w-full rounded-xl border border-white/10 bg-black/40 p-3 text-sm text-white placeholder:text-white/40 focus:border-white/40 focus:outline-none"
               disabled={isPending}
             />
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs uppercase tracking-[0.2em] text-white/50">Categories</label>
+            <label className="text-xs tracking-[0.2em] text-white/50 uppercase">
+              Categories
+            </label>
             <input
               type="text"
               value={categoriesInput}
@@ -254,7 +288,9 @@ export function WatchlistPanel({ tmdbId, title, mediaType, posterPath, backdropP
               disabled={isPending}
             />
             {categoriesList.length > 0 && (
-              <p className="text-xs text-white/50">{categoriesList.join(" · ")}</p>
+              <p className="text-xs text-white/50">
+                {categoriesList.join(" · ")}
+              </p>
             )}
           </div>
 
@@ -263,7 +299,7 @@ export function WatchlistPanel({ tmdbId, title, mediaType, posterPath, backdropP
               type="button"
               onClick={handleSave}
               disabled={isPending}
-              className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2 text-sm font-semibold text-black min-w-44"
+              className="inline-flex min-w-44 items-center gap-2 rounded-full bg-white px-5 py-2 text-sm font-semibold text-black"
             >
               {isPending ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -280,8 +316,8 @@ export function WatchlistPanel({ tmdbId, title, mediaType, posterPath, backdropP
               onClick={handleRemove}
               disabled={isPending || !hasItem}
               className={clsx(
-                "inline-flex items-center gap-2 rounded-full border border-white/20 px-5 py-2 text-sm text-white/80 hover:border-white/40 transition-opacity",
-                hasItem ? "opacity-100" : "opacity-0 pointer-events-none"
+                "inline-flex items-center gap-2 rounded-full border border-white/20 px-5 py-2 text-sm text-white/80 transition-opacity hover:border-white/40",
+                hasItem ? "opacity-100" : "pointer-events-none opacity-0"
               )}
             >
               <Trash2 className="h-4 w-4" />
@@ -289,7 +325,16 @@ export function WatchlistPanel({ tmdbId, title, mediaType, posterPath, backdropP
             </button>
           </div>
 
-          <p className={clsx("text-sm h-5", feedback ? "text-emerald-300" : (error || loadError) ? "text-red-400" : "invisible")}>
+          <p
+            className={clsx(
+              "h-5 text-sm",
+              feedback
+                ? "text-emerald-300"
+                : error || loadError
+                  ? "text-red-400"
+                  : "invisible"
+            )}
+          >
             {feedback ?? error ?? loadError ?? "\u00A0"}
           </p>
         </div>
@@ -300,7 +345,7 @@ export function WatchlistPanel({ tmdbId, title, mediaType, posterPath, backdropP
           </p>
           <a
             href="/sign-in"
-            className="mt-3 inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-black hover:bg-white/90 transition"
+            className="mt-3 inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-black transition hover:bg-white/90"
           >
             Sign in
           </a>

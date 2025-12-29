@@ -95,10 +95,18 @@ describe("posterUrl", () => {
     });
 
     it("should construct URL with specified size", () => {
-      expect(posterUrl("/abc.jpg", "w185")).toBe(`${TMDB_IMAGE_BASE}/w185/abc.jpg`);
-      expect(posterUrl("/abc.jpg", "w500")).toBe(`${TMDB_IMAGE_BASE}/w500/abc.jpg`);
-      expect(posterUrl("/abc.jpg", "w780")).toBe(`${TMDB_IMAGE_BASE}/w780/abc.jpg`);
-      expect(posterUrl("/abc.jpg", "original")).toBe(`${TMDB_IMAGE_BASE}/original/abc.jpg`);
+      expect(posterUrl("/abc.jpg", "w185")).toBe(
+        `${TMDB_IMAGE_BASE}/w185/abc.jpg`
+      );
+      expect(posterUrl("/abc.jpg", "w500")).toBe(
+        `${TMDB_IMAGE_BASE}/w500/abc.jpg`
+      );
+      expect(posterUrl("/abc.jpg", "w780")).toBe(
+        `${TMDB_IMAGE_BASE}/w780/abc.jpg`
+      );
+      expect(posterUrl("/abc.jpg", "original")).toBe(
+        `${TMDB_IMAGE_BASE}/original/abc.jpg`
+      );
     });
 
     it("should handle paths with multiple segments", () => {

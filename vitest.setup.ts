@@ -36,7 +36,11 @@ vi.mock("next/navigation", () => ({
 
 // Mock next/image - returns a proper React element
 vi.mock("next/image", () => ({
-  default: function MockImage(props: { src?: string; alt?: string; [key: string]: unknown }) {
+  default: function MockImage(props: {
+    src?: string;
+    alt?: string;
+    [key: string]: unknown;
+  }) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { src, alt, fill, priority, ...rest } = props;
     return React.createElement("img", {
@@ -50,8 +54,16 @@ vi.mock("next/image", () => ({
 
 // Mock next/link - returns a proper React element
 vi.mock("next/link", () => ({
-  default: function MockLink(props: { href?: string; children?: React.ReactNode; [key: string]: unknown }) {
+  default: function MockLink(props: {
+    href?: string;
+    children?: React.ReactNode;
+    [key: string]: unknown;
+  }) {
     const { href, children, ...rest } = props;
-    return React.createElement("a", { href: String(href ?? ""), ...rest }, children);
+    return React.createElement(
+      "a",
+      { href: String(href ?? ""), ...rest },
+      children
+    );
   },
 }));

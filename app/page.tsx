@@ -15,7 +15,10 @@ import { MovieGrid } from "@/components/movie-grid";
 export const revalidate = 300;
 
 function Hero({ feature }: { feature: MovieSummary }) {
-  const backdrop = posterUrl(feature.backdrop_path ?? feature.poster_path, "w780");
+  const backdrop = posterUrl(
+    feature.backdrop_path ?? feature.poster_path,
+    "w780"
+  );
   const title = feature.title ?? feature.name ?? "Featured";
 
   return (
@@ -71,17 +74,26 @@ export default async function Home() {
       {feature && <Hero feature={feature} />}
 
       <section className="space-y-4">
-        <SectionHeading title="Popular now" description="Community favorites pulled live from TMDB" />
+        <SectionHeading
+          title="Popular now"
+          description="Community favorites pulled live from TMDB"
+        />
         <MovieGrid items={popular.results.slice(0, 10)} />
       </section>
 
       <section className="space-y-4">
-        <SectionHeading title="Trending" description="What everyone is watching today" />
+        <SectionHeading
+          title="Trending"
+          description="What everyone is watching today"
+        />
         <MovieGrid items={trending.results.slice(0, 10)} />
       </section>
 
       <section className="space-y-4">
-        <SectionHeading title="Upcoming" description="Films headed to theaters soon" />
+        <SectionHeading
+          title="Upcoming"
+          description="Films headed to theaters soon"
+        />
         <MovieGrid items={upcoming.results.slice(0, 10)} />
       </section>
     </div>

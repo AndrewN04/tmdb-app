@@ -10,7 +10,10 @@ const CACHE_SECONDS = process.env.TMDB_CACHE_SECONDS
   : revalidate;
 
 // Translate user-friendly catch-all segments into concrete TMDB REST paths.
-function mapSegmentsToPath(segments: string[], searchParams: URLSearchParams): string | null {
+function mapSegmentsToPath(
+  segments: string[],
+  searchParams: URLSearchParams
+): string | null {
   if (segments.length === 0) {
     return null;
   }
@@ -46,7 +49,10 @@ export async function GET(
   const path = mapSegmentsToPath(params.segments ?? [], searchParams);
 
   if (!path) {
-    return NextResponse.json({ error: "Unsupported TMDB route" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Unsupported TMDB route" },
+      { status: 400 }
+    );
   }
 
   // `window` is only used internally for mapping
@@ -67,7 +73,8 @@ export async function GET(
       },
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "TMDB upstream error";
+    const message =
+      error instanceof Error ? error.message : "TMDB upstream error";
     return NextResponse.json({ error: message }, { status: 502 });
   }
 }

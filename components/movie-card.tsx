@@ -32,10 +32,12 @@ export function MovieCard({ movie, priority = false }: MovieCardProps) {
             sizes="(max-width: 768px) 50vw, 20vw"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-sm text-white/40">No art</div>
+          <div className="flex h-full w-full items-center justify-center text-sm text-white/40">
+            No art
+          </div>
         )}
         {rating && (
-          <div className="absolute left-3 top-3 flex items-center gap-1 rounded-full bg-black/60 px-3 py-1 text-xs font-medium text-white">
+          <div className="absolute top-3 left-3 flex items-center gap-1 rounded-full bg-black/60 px-3 py-1 text-xs font-medium text-white">
             <Star className="h-4 w-4 text-yellow-400" />
             {rating}
           </div>
@@ -43,7 +45,9 @@ export function MovieCard({ movie, priority = false }: MovieCardProps) {
       </div>
       <div className="space-y-1">
         <div className="flex items-center gap-2 text-sm text-white/60">
-          {movie.media_type && <Badge variant="outline">{movie.media_type}</Badge>}
+          {movie.media_type && (
+            <Badge variant="outline">{movie.media_type}</Badge>
+          )}
           {year && <span>{year}</span>}
         </div>
         <p className="line-clamp-2 font-semibold text-white">{title}</p>

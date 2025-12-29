@@ -6,7 +6,11 @@ interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
   variant?: "default" | "outline";
 }
 
-export function Badge({ className, variant = "default", ...props }: BadgeProps) {
+export function Badge({
+  className,
+  variant = "default",
+  ...props
+}: BadgeProps) {
   return (
     <span
       {...props}

@@ -35,10 +35,7 @@ describe("SectionHeading", () => {
   describe("description rendering", () => {
     it("should render description when provided", () => {
       render(
-        <SectionHeading
-          title="Title"
-          description="A helpful description"
-        />
+        <SectionHeading title="Title" description="A helpful description" />
       );
 
       expect(screen.getByText("A helpful description")).toBeInTheDocument();
@@ -52,9 +49,7 @@ describe("SectionHeading", () => {
     });
 
     it("should apply description styling", () => {
-      render(
-        <SectionHeading title="Title" description="Description text" />
-      );
+      render(<SectionHeading title="Title" description="Description text" />);
 
       const description = screen.getByText("Description text");
       expect(description).toHaveClass("text-sm");

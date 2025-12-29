@@ -10,7 +10,9 @@ export default function SignInPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState<"github" | "google" | "email" | "reset" | null>(null);
+  const [isLoading, setIsLoading] = useState<
+    "github" | "google" | "email" | "reset" | null
+  >(null);
   const [error, setError] = useState<string | null>(null);
   const [showSignUpPrompt, setShowSignUpPrompt] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
@@ -45,7 +47,7 @@ export default function SignInPage() {
 
   const handleEmailSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!email || !password) {
       setError("Email and password are required");
       return;
@@ -82,7 +84,7 @@ export default function SignInPage() {
 
   const handlePasswordReset = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!resetEmail) {
       setResetError("Email is required");
       return;
@@ -94,7 +96,7 @@ export default function SignInPage() {
 
     try {
       const supabase = createSupabaseBrowserClient();
-      
+
       const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
         redirectTo: `${window.location.origin}/auth/callback?next=/reset-password`,
       });
@@ -129,7 +131,8 @@ export default function SignInPage() {
             <div className="text-center">
               <h1 className="text-2xl font-bold">Reset Your Password</h1>
               <p className="mt-2 text-sm text-white/60">
-                Enter your email and we&apos;ll send you a link to reset your password
+                Enter your email and we&apos;ll send you a link to reset your
+                password
               </p>
             </div>
 
@@ -138,7 +141,8 @@ export default function SignInPage() {
                 <div className="rounded-md border border-green-500/20 bg-green-500/10 px-4 py-3 text-sm text-green-400">
                   <p className="font-medium">Check your email</p>
                   <p className="mt-1 text-green-400/80">
-                    We&apos;ve sent a password reset link to <span className="font-medium">{resetEmail}</span>
+                    We&apos;ve sent a password reset link to{" "}
+                    <span className="font-medium">{resetEmail}</span>
                   </p>
                 </div>
                 <button
@@ -157,7 +161,10 @@ export default function SignInPage() {
                     {showResetSignUpPrompt && (
                       <p className="mt-2">
                         Don&apos;t have an account?{" "}
-                        <Link href="/sign-up" className="font-medium text-white underline">
+                        <Link
+                          href="/sign-up"
+                          className="font-medium text-white underline"
+                        >
                           Sign up here
                         </Link>
                       </p>
@@ -167,18 +174,21 @@ export default function SignInPage() {
 
                 <form onSubmit={handlePasswordReset} className="space-y-4">
                   <div className="space-y-2">
-                    <label htmlFor="reset-email" className="block text-sm font-medium">
+                    <label
+                      htmlFor="reset-email"
+                      className="block text-sm font-medium"
+                    >
                       Email
                     </label>
                     <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/40" />
+                      <Mail className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-white/40" />
                       <input
                         id="reset-email"
                         type="email"
                         value={resetEmail}
                         onChange={(e) => setResetEmail(e.target.value)}
                         placeholder="you@example.com"
-                        className="w-full rounded-lg border border-white/10 bg-white/5 py-3 pl-10 pr-4 text-sm placeholder:text-white/30 focus:border-white/20 focus:outline-none focus:ring-1 focus:ring-white/20"
+                        className="w-full rounded-lg border border-white/10 bg-white/5 py-3 pr-4 pl-10 text-sm placeholder:text-white/30 focus:border-white/20 focus:ring-1 focus:ring-white/20 focus:outline-none"
                       />
                     </div>
                   </div>
@@ -218,7 +228,10 @@ export default function SignInPage() {
                 {showSignUpPrompt && (
                   <p className="mt-2">
                     Don&apos;t have an account?{" "}
-                    <Link href="/sign-up" className="font-medium text-white underline">
+                    <Link
+                      href="/sign-up"
+                      className="font-medium text-white underline"
+                    >
                       Sign up here
                     </Link>
                   </p>
@@ -233,21 +246,24 @@ export default function SignInPage() {
                   Email
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/40" />
+                  <Mail className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-white/40" />
                   <input
                     id="email"
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="you@example.com"
-                    className="w-full rounded-lg border border-white/10 bg-white/5 py-3 pl-10 pr-4 text-sm placeholder:text-white/30 focus:border-white/20 focus:outline-none focus:ring-1 focus:ring-white/20"
+                    className="w-full rounded-lg border border-white/10 bg-white/5 py-3 pr-4 pl-10 text-sm placeholder:text-white/30 focus:border-white/20 focus:ring-1 focus:ring-white/20 focus:outline-none"
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <label htmlFor="password" className="block text-sm font-medium">
+                  <label
+                    htmlFor="password"
+                    className="block text-sm font-medium"
+                  >
                     Password
                   </label>
                   <button
@@ -259,21 +275,25 @@ export default function SignInPage() {
                   </button>
                 </div>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/40" />
+                  <Lock className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-white/40" />
                   <input
                     id="password"
                     type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full rounded-lg border border-white/10 bg-white/5 py-3 pl-10 pr-10 text-sm placeholder:text-white/30 focus:border-white/20 focus:outline-none focus:ring-1 focus:ring-white/20"
+                    className="w-full rounded-lg border border-white/10 bg-white/5 py-3 pr-10 pl-10 text-sm placeholder:text-white/30 focus:border-white/20 focus:ring-1 focus:ring-white/20 focus:outline-none"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/60"
+                    className="absolute top-1/2 right-3 -translate-y-1/2 text-white/40 hover:text-white/60"
                   >
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
                   </button>
                 </div>
               </div>
@@ -292,7 +312,9 @@ export default function SignInPage() {
                 <div className="w-full border-t border-white/10" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="bg-slate-950 px-4 text-white/40">or continue with</span>
+                <span className="bg-slate-950 px-4 text-white/40">
+                  or continue with
+                </span>
               </div>
             </div>
 

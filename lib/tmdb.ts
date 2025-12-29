@@ -61,7 +61,11 @@ export interface MovieDetail extends MediaSummary {
   homepage?: string | null;
   budget?: number;
   revenue?: number;
-  production_companies?: { id: number; name: string; logo_path: string | null }[];
+  production_companies?: {
+    id: number;
+    name: string;
+    logo_path: string | null;
+  }[];
   spoken_languages?: { iso_639_1: string; name: string }[];
   credits?: {
     cast: CastMember[];
@@ -146,7 +150,9 @@ export interface SearchFilters {
 // =============================================================================
 
 export async function getPopularMovies(page = "1") {
-  return fetchTmdb<MediaListResponse>("movie/popular", { searchParams: { page } });
+  return fetchTmdb<MediaListResponse>("movie/popular", {
+    searchParams: { page },
+  });
 }
 
 export async function getTrendingMovies(window: "day" | "week" = "day") {
@@ -154,15 +160,21 @@ export async function getTrendingMovies(window: "day" | "week" = "day") {
 }
 
 export async function getTopRatedMovies(page = "1") {
-  return fetchTmdb<MediaListResponse>("movie/top_rated", { searchParams: { page } });
+  return fetchTmdb<MediaListResponse>("movie/top_rated", {
+    searchParams: { page },
+  });
 }
 
 export async function getUpcomingMovies(page = "1") {
-  return fetchTmdb<MediaListResponse>("movie/upcoming", { searchParams: { page } });
+  return fetchTmdb<MediaListResponse>("movie/upcoming", {
+    searchParams: { page },
+  });
 }
 
 export async function getNowPlayingMovies(page = "1") {
-  return fetchTmdb<MediaListResponse>("movie/now_playing", { searchParams: { page } });
+  return fetchTmdb<MediaListResponse>("movie/now_playing", {
+    searchParams: { page },
+  });
 }
 
 export async function getMovieDetails(id: string) {
@@ -192,15 +204,21 @@ export async function getTrendingTV(window: "day" | "week" = "day") {
 }
 
 export async function getTopRatedTV(page = "1") {
-  return fetchTmdb<MediaListResponse>("tv/top_rated", { searchParams: { page } });
+  return fetchTmdb<MediaListResponse>("tv/top_rated", {
+    searchParams: { page },
+  });
 }
 
 export async function getOnTheAirTV(page = "1") {
-  return fetchTmdb<MediaListResponse>("tv/on_the_air", { searchParams: { page } });
+  return fetchTmdb<MediaListResponse>("tv/on_the_air", {
+    searchParams: { page },
+  });
 }
 
 export async function getAiringTodayTV(page = "1") {
-  return fetchTmdb<MediaListResponse>("tv/airing_today", { searchParams: { page } });
+  return fetchTmdb<MediaListResponse>("tv/airing_today", {
+    searchParams: { page },
+  });
 }
 
 export async function getTVDetails(id: string) {
@@ -243,13 +261,21 @@ export async function searchMulti(query: string, page = "1") {
   });
 }
 
-export async function searchMovies(query: string, page = "1", filters?: SearchFilters) {
+export async function searchMovies(
+  query: string,
+  page = "1",
+  filters?: SearchFilters
+) {
   return fetchTmdb<MediaListResponse>("search/movie", {
     searchParams: { query, page, include_adult: "false", ...filters },
   });
 }
 
-export async function searchTV(query: string, page = "1", filters?: SearchFilters) {
+export async function searchTV(
+  query: string,
+  page = "1",
+  filters?: SearchFilters
+) {
   return fetchTmdb<MediaListResponse>("search/tv", {
     searchParams: { query, page, include_adult: "false", ...filters },
   });
@@ -266,7 +292,9 @@ export async function discoverMovies(filters: SearchFilters = {}) {
     include_adult: "false",
     ...filters,
   };
-  return fetchTmdb<MediaListResponse>("discover/movie", { searchParams: params });
+  return fetchTmdb<MediaListResponse>("discover/movie", {
+    searchParams: params,
+  });
 }
 
 export async function discoverTV(filters: SearchFilters = {}) {

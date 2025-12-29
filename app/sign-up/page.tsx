@@ -17,11 +17,14 @@ export default function SignUpPage() {
 
   const validateForm = (): string | null => {
     if (!email) return "Email is required";
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return "Invalid email format";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+      return "Invalid email format";
     if (!password) return "Password is required";
     if (password.length < 8) return "Password must be at least 8 characters";
-    if (!/[A-Z]/.test(password)) return "Password must contain an uppercase letter";
-    if (!/[a-z]/.test(password)) return "Password must contain a lowercase letter";
+    if (!/[A-Z]/.test(password))
+      return "Password must contain an uppercase letter";
+    if (!/[a-z]/.test(password))
+      return "Password must contain a lowercase letter";
     if (!/[0-9]/.test(password)) return "Password must contain a number";
     if (password !== confirmPassword) return "Passwords do not match";
     return null;
@@ -29,7 +32,7 @@ export default function SignUpPage() {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const validationError = validateForm();
     if (validationError) {
       setError(validationError);
@@ -53,7 +56,9 @@ export default function SignUpPage() {
         setError(error.message);
       } else if (data.user?.identities?.length === 0) {
         // User exists (signed up via OAuth or email already confirmed)
-        setError("This email is already in use. Please try a different email or login.");
+        setError(
+          "This email is already in use. Please try a different email or login."
+        );
       } else {
         setSuccess(true);
       }
@@ -106,7 +111,10 @@ export default function SignUpPage() {
             {error.includes("already in use") ? (
               <>
                 This email is already in use. Please try a different email or{" "}
-                <Link href="/sign-in" className="font-medium text-white underline">
+                <Link
+                  href="/sign-in"
+                  className="font-medium text-white underline"
+                >
                   login
                 </Link>
                 .
@@ -124,14 +132,14 @@ export default function SignUpPage() {
               Email
             </label>
             <div className="relative">
-              <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/40" />
+              <Mail className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-white/40" />
               <input
                 id="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
-                className="w-full rounded-lg border border-white/10 bg-white/5 py-3 pl-10 pr-4 text-sm placeholder:text-white/30 focus:border-white/20 focus:outline-none focus:ring-1 focus:ring-white/20"
+                className="w-full rounded-lg border border-white/10 bg-white/5 py-3 pr-4 pl-10 text-sm placeholder:text-white/30 focus:border-white/20 focus:ring-1 focus:ring-white/20 focus:outline-none"
               />
             </div>
           </div>
@@ -142,21 +150,25 @@ export default function SignUpPage() {
               Password
             </label>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/40" />
+              <Lock className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-white/40" />
               <input
                 id="password"
                 type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full rounded-lg border border-white/10 bg-white/5 py-3 pl-10 pr-10 text-sm placeholder:text-white/30 focus:border-white/20 focus:outline-none focus:ring-1 focus:ring-white/20"
+                className="w-full rounded-lg border border-white/10 bg-white/5 py-3 pr-10 pl-10 text-sm placeholder:text-white/30 focus:border-white/20 focus:ring-1 focus:ring-white/20 focus:outline-none"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/60"
+                className="absolute top-1/2 right-3 -translate-y-1/2 text-white/40 hover:text-white/60"
               >
-                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                {showPassword ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
               </button>
             </div>
             <p className="text-xs text-white/40">
@@ -166,25 +178,32 @@ export default function SignUpPage() {
 
           {/* Confirm Password */}
           <div className="space-y-2">
-            <label htmlFor="confirmPassword" className="block text-sm font-medium">
+            <label
+              htmlFor="confirmPassword"
+              className="block text-sm font-medium"
+            >
               Confirm Password
             </label>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/40" />
+              <Lock className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-white/40" />
               <input
                 id="confirmPassword"
                 type={showConfirmPassword ? "text" : "password"}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full rounded-lg border border-white/10 bg-white/5 py-3 pl-10 pr-10 text-sm placeholder:text-white/30 focus:border-white/20 focus:outline-none focus:ring-1 focus:ring-white/20"
+                className="w-full rounded-lg border border-white/10 bg-white/5 py-3 pr-10 pl-10 text-sm placeholder:text-white/30 focus:border-white/20 focus:ring-1 focus:ring-white/20 focus:outline-none"
               />
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/60"
+                className="absolute top-1/2 right-3 -translate-y-1/2 text-white/40 hover:text-white/60"
               >
-                {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                {showConfirmPassword ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
               </button>
             </div>
           </div>

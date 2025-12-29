@@ -26,11 +26,15 @@ describe("cn (class name utility)", () => {
 
   describe("conditional class handling", () => {
     it("should filter out falsy values", () => {
-      expect(cn("text-white", false, null, undefined, "bg-black")).toBe("text-white bg-black");
+      expect(cn("text-white", false, null, undefined, "bg-black")).toBe(
+        "text-white bg-black"
+      );
     });
 
     it("should handle conditional objects", () => {
-      expect(cn({ "text-white": true, "text-black": false })).toBe("text-white");
+      expect(cn({ "text-white": true, "text-black": false })).toBe(
+        "text-white"
+      );
     });
 
     it("should handle empty string", () => {
@@ -77,12 +81,20 @@ describe("cn (class name utility)", () => {
 
   describe("edge cases", () => {
     it("should handle nested arrays", () => {
-      expect(cn(["text-white", ["bg-black", "p-4"]])).toBe("text-white bg-black p-4");
+      expect(cn(["text-white", ["bg-black", "p-4"]])).toBe(
+        "text-white bg-black p-4"
+      );
     });
 
     it("should handle mixed inputs", () => {
       expect(
-        cn("base-class", ["array-class"], { conditional: true }, null, undefined)
+        cn(
+          "base-class",
+          ["array-class"],
+          { conditional: true },
+          null,
+          undefined
+        )
       ).toBe("base-class array-class conditional");
     });
   });

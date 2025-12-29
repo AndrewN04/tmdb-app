@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Geist, Geist_Mono } from "next/font/google";
-import { AuthButton } from "@/components/auth-button";
+import { SiteHeader } from "@/components/site-header";
+import { SiteFooter } from "@/components/site-footer";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -16,7 +16,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "TMDB Watchlist",
-  description: "Browse TMDB movies, track your watchlist, and sync with Supabase Auth.",
+  description:
+    "Browse TMDB movies, track your watchlist, and sync with Supabase Auth.",
 };
 
 export default function RootLayout({
@@ -26,27 +27,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-slate-950 text-white antialiased`}>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-slate-950 text-white antialiased`}
+      >
         <div className="flex min-h-screen flex-col">
-          <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/95 backdrop-blur-sm">
-            <nav className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4">
-              <Link href="/" className="text-xl font-semibold tracking-tight">
-                TMDB
-              </Link>
-              <div className="flex items-center gap-6 text-sm text-white/80">
-                <Link href="/browse" className="hover:text-white">
-                  Browse
-                </Link>
-                <AuthButton />
-              </div>
-            </nav>
-          </header>
-          <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-10">{children}</main>
-          <footer className="border-t border-white/5 bg-black/40 py-6">
-            <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 text-xs text-white/60">
-              <span>Powered by TMDB • Supabase Auth • Prisma</span>
-            </div>
-          </footer>
+          <SiteHeader />
+          <main className="mx-auto w-full max-w-7xl flex-1 px-6 py-10">
+            {children}
+          </main>
+          <SiteFooter />
         </div>
       </body>
     </html>

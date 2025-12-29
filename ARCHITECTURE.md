@@ -44,16 +44,16 @@ The goal is to demonstrate a modern full-stack Next.js 16 App Router architectur
 
 ## Tech Stack
 
-| Layer | Technology |
-| ------- | --------- |
-| Framework | Next.js 16 (App Router, Turbopack) |
-| Language | TypeScript 5 |
-| UI | React 19, Tailwind CSS 4, lucide-react icons |
-| Database | PostgreSQL (Supabase) |
-| ORM | Prisma 7 (with driver adapters) |
-| Auth | Supabase Auth (SSR via `@supabase/ssr`) |
-| External API | TMDB v3 REST API |
-| Deployment | Vercel (implied via env vars) |
+| Layer        | Technology                                   |
+| ------------ | -------------------------------------------- |
+| Framework    | Next.js 16 (App Router, Turbopack)           |
+| Language     | TypeScript 5                                 |
+| UI           | React 19, Tailwind CSS 4, lucide-react icons |
+| Database     | PostgreSQL (Supabase)                        |
+| ORM          | Prisma 7 (with driver adapters)              |
+| Auth         | Supabase Auth (SSR via `@supabase/ssr`)      |
+| External API | TMDB v3 REST API                             |
+| Deployment   | Vercel (implied via env vars)                |
 
 ---
 
@@ -293,7 +293,10 @@ import "server-only";
 const TMDB_BASE_URL = "https://api.themoviedb.org/3";
 const TMDB_API_KEY = process.env.TMDB_API_KEY;
 
-export async function fetchTmdb<T>(endpoint: string, options: FetchTmdbOptions = {}): Promise<T> {
+export async function fetchTmdb<T>(
+  endpoint: string,
+  options: FetchTmdbOptions = {}
+): Promise<T> {
   const apiKey = ensureApiKey();
   const url = new URL(`${TMDB_BASE_URL}/${endpoint.replace(/^\/+/, "")}`);
 
@@ -321,13 +324,13 @@ export async function fetchTmdb<T>(endpoint: string, options: FetchTmdbOptions =
 
 **Helper Functions:**
 
-| Function | Purpose |
-| -------- | ------- |
-| `ensureApiKey()` | Throws if `TMDB_API_KEY` is missing. |
-| `isV4Token(key)` | Detects Bearer-style v4 tokens vs. v3 query-string keys. |
-| `mergeHeaders(base, override)` | Combines default headers with caller overrides. |
-| `appendSearchParams(url, params)` | Safely appends non-null query params. |
-| `readBody(res)` | Reads response text for error messages. |
+| Function                          | Purpose                                                  |
+| --------------------------------- | -------------------------------------------------------- |
+| `ensureApiKey()`                  | Throws if `TMDB_API_KEY` is missing.                     |
+| `isV4Token(key)`                  | Detects Bearer-style v4 tokens vs. v3 query-string keys. |
+| `mergeHeaders(base, override)`    | Combines default headers with caller overrides.          |
+| `appendSearchParams(url, params)` | Safely appends non-null query params.                    |
+| `readBody(res)`                   | Reads response text for error messages.                  |
 
 **Why `"server-only"`?**  
 The import at the top ensures this module can only run on the server—preventing accidental exposure of `TMDB_API_KEY` to the client bundle.
@@ -342,8 +345,8 @@ High-level domain functions built on `fetchTmdb`. The API layer supports both mo
 // Unified type for both movies and TV shows
 interface MediaSummary {
   id: number;
-  title?: string;        // Movies
-  name?: string;         // TV shows
+  title?: string; // Movies
+  name?: string; // TV shows
   overview: string;
   poster_path: string | null;
   backdrop_path: string | null;
@@ -365,67 +368,123 @@ interface MediaListResponse {
 #### Movie Functions
 
 ```typescript
-export async function getPopularMovies(page = "1") { /* ... */ }
-export async function getTrendingMovies(window: "day" | "week" = "day") { /* ... */ }
-export async function getTopRatedMovies(page = "1") { /* ... */ }
-export async function getUpcomingMovies(page = "1") { /* ... */ }
-export async function getNowPlayingMovies(page = "1") { /* ... */ }
-export async function getMovieDetails(id: string) { /* includes credits */ }
-export async function getMovieRecommendations(id: string) { /* ... */ }
-export async function getSimilarMovies(id: string) { /* ... */ }
+export async function getPopularMovies(page = "1") {
+  /* ... */
+}
+export async function getTrendingMovies(window: "day" | "week" = "day") {
+  /* ... */
+}
+export async function getTopRatedMovies(page = "1") {
+  /* ... */
+}
+export async function getUpcomingMovies(page = "1") {
+  /* ... */
+}
+export async function getNowPlayingMovies(page = "1") {
+  /* ... */
+}
+export async function getMovieDetails(id: string) {
+  /* includes credits */
+}
+export async function getMovieRecommendations(id: string) {
+  /* ... */
+}
+export async function getSimilarMovies(id: string) {
+  /* ... */
+}
 ```
 
 #### TV Show Functions
 
 ```typescript
-export async function getPopularTV(page = "1") { /* ... */ }
-export async function getTrendingTV(window: "day" | "week" = "day") { /* ... */ }
-export async function getTopRatedTV(page = "1") { /* ... */ }
-export async function getOnTheAirTV(page = "1") { /* ... */ }
-export async function getAiringTodayTV(page = "1") { /* ... */ }
-export async function getTVDetails(id: string) { /* includes credits */ }
-export async function getTVRecommendations(id: string) { /* ... */ }
-export async function getSimilarTV(id: string) { /* ... */ }
+export async function getPopularTV(page = "1") {
+  /* ... */
+}
+export async function getTrendingTV(window: "day" | "week" = "day") {
+  /* ... */
+}
+export async function getTopRatedTV(page = "1") {
+  /* ... */
+}
+export async function getOnTheAirTV(page = "1") {
+  /* ... */
+}
+export async function getAiringTodayTV(page = "1") {
+  /* ... */
+}
+export async function getTVDetails(id: string) {
+  /* includes credits */
+}
+export async function getTVRecommendations(id: string) {
+  /* ... */
+}
+export async function getSimilarTV(id: string) {
+  /* ... */
+}
 ```
 
 #### Genre Functions
 
 ```typescript
-export async function getMovieGenres() { /* ... */ }
-export async function getTVGenres() { /* ... */ }
-export async function getGenres(type: "movie" | "tv") { /* ... */ }
+export async function getMovieGenres() {
+  /* ... */
+}
+export async function getTVGenres() {
+  /* ... */
+}
+export async function getGenres(type: "movie" | "tv") {
+  /* ... */
+}
 ```
 
 #### Search Functions
 
 ```typescript
-export async function searchMulti(query: string, page = "1") { /* movies + TV combined */ }
-export async function searchMovies(query: string, page = "1", filters?: SearchFilters) { /* ... */ }
-export async function searchTV(query: string, page = "1", filters?: SearchFilters) { /* ... */ }
+export async function searchMulti(query: string, page = "1") {
+  /* movies + TV combined */
+}
+export async function searchMovies(
+  query: string,
+  page = "1",
+  filters?: SearchFilters
+) {
+  /* ... */
+}
+export async function searchTV(
+  query: string,
+  page = "1",
+  filters?: SearchFilters
+) {
+  /* ... */
+}
 ```
 
 #### Discover Functions (Advanced Filtering)
 
 ```typescript
-export async function discoverMovies(filters: SearchFilters = {}) { /* ... */ }
-export async function discoverTV(filters: SearchFilters = {}) { /* ... */ }
+export async function discoverMovies(filters: SearchFilters = {}) {
+  /* ... */
+}
+export async function discoverTV(filters: SearchFilters = {}) {
+  /* ... */
+}
 
 // SearchFilters supports: page, year, with_genres, primary_release_date.gte/lte, sort_by, etc.
 ```
 
 #### Utility Functions
 
-| Function | Purpose |
-| -------- | ------- |
-| `getTitle(media)` | Returns `title` or `name` depending on media type. |
-| `formatYear(media)` | Extracts year from `release_date` or `first_air_date`. |
-| `formatDate(media, locale)` | Formats release/air date for display. |
-| `formatRuntime(minutes)` | Converts minutes to "2h 15m" format. |
-| `ratingToPercent(voteAverage)` | Converts 0-10 rating to percentage (e.g., 8.4 → 84). |
-| `posterUrl(path, size)` | Constructs full TMDB poster image URL. |
-| `backdropUrl(path, size)` | Constructs full TMDB backdrop image URL. |
-| `profileUrl(path, size)` | Constructs full TMDB profile image URL (for cast/crew). |
-| `getMediaType(media)` | Infers "movie" or "tv" from object properties. |
+| Function                       | Purpose                                                 |
+| ------------------------------ | ------------------------------------------------------- |
+| `getTitle(media)`              | Returns `title` or `name` depending on media type.      |
+| `formatYear(media)`            | Extracts year from `release_date` or `first_air_date`.  |
+| `formatDate(media, locale)`    | Formats release/air date for display.                   |
+| `formatRuntime(minutes)`       | Converts minutes to "2h 15m" format.                    |
+| `ratingToPercent(voteAverage)` | Converts 0-10 rating to percentage (e.g., 8.4 → 84).    |
+| `posterUrl(path, size)`        | Constructs full TMDB poster image URL.                  |
+| `backdropUrl(path, size)`      | Constructs full TMDB backdrop image URL.                |
+| `profileUrl(path, size)`       | Constructs full TMDB profile image URL (for cast/crew). |
+| `getMediaType(media)`          | Infers "movie" or "tv" from object properties.          |
 
 ---
 
@@ -443,7 +502,8 @@ async function requireSupabaseUser(): Promise<SupabaseUser> {
   const { data, error } = await supabase.auth.getUser();
 
   if (error) throw new Error(error.message);
-  if (!data.user) throw new Error("You must be signed in to manage your watchlist");
+  if (!data.user)
+    throw new Error("You must be signed in to manage your watchlist");
 
   return data.user;
 }
@@ -465,12 +525,12 @@ Ensures the Prisma `User` table mirrors Supabase Auth—runs on every mutation s
 
 #### Validation Helpers
 
-| Function | Purpose |
-| -------- | ------- |
-| `coerceTmdbId(id)` | Parses string/number to positive int, throws on invalid. |
-| `validateMediaType(mediaType)` | Ensures mediaType is "movie" or "tv", throws on invalid. |
-| `sanitizeNotes(notes)` | Trims, enforces max length (2000 chars). |
-| `sanitizeCategories(categories)` | Trims, filters blanks, caps at 12 entries. |
+| Function                         | Purpose                                                  |
+| -------------------------------- | -------------------------------------------------------- |
+| `coerceTmdbId(id)`               | Parses string/number to positive int, throws on invalid. |
+| `validateMediaType(mediaType)`   | Ensures mediaType is "movie" or "tv", throws on invalid. |
+| `sanitizeNotes(notes)`           | Trims, enforces max length (2000 chars).                 |
+| `sanitizeCategories(categories)` | Trims, filters blanks, caps at 12 entries.               |
 
 #### Input Types
 
@@ -479,7 +539,7 @@ All watchlist actions now require `mediaType` to distinguish between movies and 
 ```typescript
 interface BaseWatchlistInput {
   tmdbId: number | string;
-  mediaType: "movie" | "tv";  // Required for all actions
+  mediaType: "movie" | "tv"; // Required for all actions
 }
 
 interface WatchlistUpsertInput extends BaseWatchlistInput {
@@ -494,20 +554,20 @@ interface WatchlistUpsertInput extends BaseWatchlistInput {
 
 #### CRUD Actions
 
-| Action | Description |
-| ------ | ----------- |
-| `saveWatchlistItem(input)` | Upserts a watchlist entry with full metadata. |
-| `updateWatchlistMeta(input)` | Partial update for notes, categories, or favorite flag. |
-| `removeWatchlistItem(input)` | Deletes entry; swallows "not found" errors gracefully. |
-| `getWatchlistStatus(input)` | Returns current user + item state; used by `WatchlistPanel`. |
-| `getUserWatchlist(options)` | Fetches user's watchlist with filtering/sorting options. |
-| `getWatchlistCounts()` | Returns counts by media type (movies, TV, favorites, total). |
+| Action                       | Description                                                  |
+| ---------------------------- | ------------------------------------------------------------ |
+| `saveWatchlistItem(input)`   | Upserts a watchlist entry with full metadata.                |
+| `updateWatchlistMeta(input)` | Partial update for notes, categories, or favorite flag.      |
+| `removeWatchlistItem(input)` | Deletes entry; swallows "not found" errors gracefully.       |
+| `getWatchlistStatus(input)`  | Returns current user + item state; used by `WatchlistPanel`. |
+| `getUserWatchlist(options)`  | Fetches user's watchlist with filtering/sorting options.     |
+| `getWatchlistCounts()`       | Returns counts by media type (movies, TV, favorites, total). |
 
 #### Query Options
 
 ```typescript
 interface GetUserWatchlistOptions {
-  mediaType?: "movie" | "tv" | "all";  // Filter by type
+  mediaType?: "movie" | "tv" | "all"; // Filter by type
   sortBy?: "createdAt" | "title" | "updatedAt";
   sortOrder?: "asc" | "desc";
   favoritesOnly?: boolean;
@@ -539,7 +599,10 @@ function isRecoverableAuthError(error: AuthError) {
 function isRecoverableNetworkError(error: unknown): boolean {
   if (!(error instanceof Error)) return false;
   const code = getNodeErrorCode(error);
-  if (code && ["ETIMEDOUT", "ECONNRESET", "ECONNREFUSED", "ENOTFOUND"].includes(code)) {
+  if (
+    code &&
+    ["ETIMEDOUT", "ECONNRESET", "ECONNREFUSED", "ENOTFOUND"].includes(code)
+  ) {
     return true;
   }
   return /fetch failed/i.test(error.message);
@@ -681,7 +744,8 @@ Standard pattern for merging Tailwind classes without conflicts.
 ```typescript
 export function getBaseUrl() {
   if (typeof window !== "undefined") return window.location.origin;
-  if (process.env.NEXT_PUBLIC_APP_URL) return process.env.NEXT_PUBLIC_APP_URL.replace(/\/$/, "");
+  if (process.env.NEXT_PUBLIC_APP_URL)
+    return process.env.NEXT_PUBLIC_APP_URL.replace(/\/$/, "");
   if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
   return "http://localhost:3000";
 }
@@ -718,17 +782,28 @@ Edge-cached proxy for TMDB requests:
 export const runtime = "edge";
 export const revalidate = 3600;
 
-function mapSegmentsToPath(segments: string[], searchParams: URLSearchParams): string | null {
+function mapSegmentsToPath(
+  segments: string[],
+  searchParams: URLSearchParams
+): string | null {
   // Maps user-friendly paths like /api/tmdb/popular → movie/popular
 }
 
 export async function GET(request: Request, context) {
   const path = mapSegmentsToPath(params.segments, searchParams);
-  if (!path) return NextResponse.json({ error: "Unsupported TMDB route" }, { status: 400 });
+  if (!path)
+    return NextResponse.json(
+      { error: "Unsupported TMDB route" },
+      { status: 400 }
+    );
 
   try {
-    const payload = await fetchTmdb(path, { /* cache settings */ });
-    return NextResponse.json(payload, { headers: { "Cache-Control": `public, s-maxage=${CACHE_SECONDS}` } });
+    const payload = await fetchTmdb(path, {
+      /* cache settings */
+    });
+    return NextResponse.json(payload, {
+      headers: { "Cache-Control": `public, s-maxage=${CACHE_SECONDS}` },
+    });
   } catch (error) {
     return NextResponse.json({ error: message }, { status: 502 });
   }
@@ -745,15 +820,15 @@ export async function GET(request: Request, context) {
 
 ## Environment Variables
 
-| Variable | Scope | Purpose |
-| -------- | ----- | ------- |
-| `DATABASE_URL` | Server | Prisma connection string (Supabase Postgres pooler). |
-| `NEXT_PUBLIC_SUPABASE_URL` | Public | Supabase project URL. |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Public | Supabase anon/public key for browser auth. |
-| `SUPABASE_SERVICE_ROLE_KEY` | Server | Bypasses RLS for Prisma server actions (optional). |
-| `TMDB_API_KEY` | Server | TMDB v3 or v4 API token. |
-| `NEXT_PUBLIC_APP_URL` | Public | Canonical app URL for server-side fetches (optional). |
-| `TMDB_CACHE_SECONDS` | Server | Custom cache duration for TMDB API proxy (optional, default: 3600). |
+| Variable                        | Scope  | Purpose                                                             |
+| ------------------------------- | ------ | ------------------------------------------------------------------- |
+| `DATABASE_URL`                  | Server | Prisma connection string (Supabase Postgres pooler).                |
+| `NEXT_PUBLIC_SUPABASE_URL`      | Public | Supabase project URL.                                               |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Public | Supabase anon/public key for browser auth.                          |
+| `SUPABASE_SERVICE_ROLE_KEY`     | Server | Bypasses RLS for Prisma server actions (optional).                  |
+| `TMDB_API_KEY`                  | Server | TMDB v3 or v4 API token.                                            |
+| `NEXT_PUBLIC_APP_URL`           | Public | Canonical app URL for server-side fetches (optional).               |
+| `TMDB_CACHE_SECONDS`            | Server | Custom cache duration for TMDB API proxy (optional, default: 3600). |
 
 ---
 
@@ -773,11 +848,11 @@ export async function GET(request: Request, context) {
 
 ## Caching & Revalidation
 
-| Layer | Strategy |
-| ----- | -------- |
-| Home / Browse pages | `export const revalidate = 300` (ISR every 5 min). |
-| Movie detail page | `export const dynamic = "force-dynamic"` (always fresh). |
-| TMDB API proxy | Edge cache with `s-maxage=3600` (1 hour). |
+| Layer               | Strategy                                                             |
+| ------------------- | -------------------------------------------------------------------- |
+| Home / Browse pages | `export const revalidate = 300` (ISR every 5 min).                   |
+| Movie detail page   | `export const dynamic = "force-dynamic"` (always fresh).             |
+| TMDB API proxy      | Edge cache with `s-maxage=3600` (1 hour).                            |
 | Watchlist mutations | `revalidatePath()` busts ISR cache for `/profile` and `/movie/[id]`. |
 
 ---

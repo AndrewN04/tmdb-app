@@ -233,7 +233,10 @@ describe("AuthButton", () => {
     it("should update user when auth state changes", async () => {
       mockGetUser.mockResolvedValue({ data: { user: null } });
 
-      let authCallback: (event: string, session: { user: SupabaseUser | null } | null) => void;
+      let authCallback: (
+        event: string,
+        session: { user: SupabaseUser | null } | null
+      ) => void;
       mockOnAuthStateChange.mockImplementation((callback) => {
         authCallback = callback;
         return { data: { subscription: { unsubscribe: mockUnsubscribe } } };

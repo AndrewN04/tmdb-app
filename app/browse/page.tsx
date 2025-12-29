@@ -1,6 +1,10 @@
 import { SectionHeading } from "@/components/section-heading";
 import { MovieGrid } from "@/components/movie-grid";
-import { getPopularMovies, getTopRatedMovies, getTrendingMovies } from "@/lib/tmdb";
+import {
+  getPopularMovies,
+  getTopRatedMovies,
+  getTrendingMovies,
+} from "@/lib/tmdb";
 
 export const revalidate = 300;
 
@@ -14,10 +18,13 @@ export default async function BrowsePage() {
   return (
     <div className="space-y-12">
       <header className="space-y-3">
-        <p className="text-sm uppercase tracking-[0.3em] text-white/60">Catalog</p>
+        <p className="text-sm tracking-[0.3em] text-white/60 uppercase">
+          Catalog
+        </p>
         <h1 className="text-4xl font-bold">Browse movies</h1>
         <p className="text-white/70">
-          Everything is fetched on-demand from TMDB via our edge-cached route handlers so your data is always fresh.
+          Everything is fetched on-demand from TMDB via our edge-cached route
+          handlers so your data is always fresh.
         </p>
       </header>
 

@@ -54,7 +54,9 @@ describe("OAuth callback route", () => {
       const response = await GET(request);
 
       expect(response.status).toBe(307);
-      expect(response.headers.get("Location")).toBe("http://localhost:3000/profile");
+      expect(response.headers.get("Location")).toBe(
+        "http://localhost:3000/profile"
+      );
     });
 
     it("should exchange code for session", async () => {

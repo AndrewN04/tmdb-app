@@ -70,7 +70,8 @@ describe("fetchTmdb", () => {
       const { fetchTmdb } = await import("@/lib/tmdb/fetcher");
       await fetchTmdb("movie/popular");
 
-      const calledInit = vi.mocked(global.fetch).mock.calls[0][1] as RequestInit;
+      const calledInit = vi.mocked(global.fetch).mock
+        .calls[0][1] as RequestInit;
       const headers = new Headers(calledInit.headers);
       expect(headers.get("Authorization")).toContain("Bearer eyJ");
     });
@@ -154,7 +155,9 @@ describe("fetchTmdb", () => {
 
       const { fetchTmdb } = await import("@/lib/tmdb/fetcher");
 
-      await expect(fetchTmdb("movie/popular")).rejects.toThrow("TMDB request failed (401)");
+      await expect(fetchTmdb("movie/popular")).rejects.toThrow(
+        "TMDB request failed (401)"
+      );
     });
 
     it("should include response body in error message", async () => {
@@ -166,7 +169,9 @@ describe("fetchTmdb", () => {
 
       const { fetchTmdb } = await import("@/lib/tmdb/fetcher");
 
-      await expect(fetchTmdb("movie/999999")).rejects.toThrow("Resource not found");
+      await expect(fetchTmdb("movie/999999")).rejects.toThrow(
+        "Resource not found"
+      );
     });
   });
 
@@ -183,7 +188,8 @@ describe("fetchTmdb", () => {
       const { fetchTmdb } = await import("@/lib/tmdb/fetcher");
       await fetchTmdb("movie/popular");
 
-      const calledInit = vi.mocked(global.fetch).mock.calls[0][1] as RequestInit;
+      const calledInit = vi.mocked(global.fetch).mock
+        .calls[0][1] as RequestInit;
       const headers = new Headers(calledInit.headers);
       expect(headers.get("accept")).toBe("application/json");
     });
@@ -194,7 +200,8 @@ describe("fetchTmdb", () => {
         init: { headers: { "X-Custom": "value" } },
       });
 
-      const calledInit = vi.mocked(global.fetch).mock.calls[0][1] as RequestInit;
+      const calledInit = vi.mocked(global.fetch).mock
+        .calls[0][1] as RequestInit;
       const headers = new Headers(calledInit.headers);
       expect(headers.get("accept")).toBe("application/json");
       expect(headers.get("X-Custom")).toBe("value");
@@ -206,7 +213,8 @@ describe("fetchTmdb", () => {
         init: { cache: "force-cache", next: { revalidate: 3600 } },
       });
 
-      const calledInit = vi.mocked(global.fetch).mock.calls[0][1] as RequestInit;
+      const calledInit = vi.mocked(global.fetch).mock
+        .calls[0][1] as RequestInit;
       expect(calledInit.cache).toBe("force-cache");
     });
   });

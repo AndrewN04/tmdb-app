@@ -21,8 +21,11 @@ export default function ResetPasswordPage() {
     { label: "One number", test: (p: string) => /[0-9]/.test(p) },
   ];
 
-  const isPasswordValid = passwordRequirements.every((req) => req.test(password));
-  const doPasswordsMatch = password === confirmPassword && confirmPassword.length > 0;
+  const isPasswordValid = passwordRequirements.every((req) =>
+    req.test(password)
+  );
+  const doPasswordsMatch =
+    password === confirmPassword && confirmPassword.length > 0;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,7 +74,8 @@ export default function ResetPasswordPage() {
           <div>
             <h1 className="text-2xl font-bold">Password Updated!</h1>
             <p className="mt-2 text-sm text-white/60">
-              Your password has been successfully changed. Please sign in with your new password.
+              Your password has been successfully changed. Please sign in with
+              your new password.
             </p>
           </div>
           <Link
@@ -107,21 +111,25 @@ export default function ResetPasswordPage() {
               New Password
             </label>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/40" />
+              <Lock className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-white/40" />
               <input
                 id="password"
                 type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full rounded-lg border border-white/10 bg-white/5 py-3 pl-10 pr-10 text-sm placeholder:text-white/30 focus:border-white/20 focus:outline-none focus:ring-1 focus:ring-white/20"
+                className="w-full rounded-lg border border-white/10 bg-white/5 py-3 pr-10 pl-10 text-sm placeholder:text-white/30 focus:border-white/20 focus:ring-1 focus:ring-white/20 focus:outline-none"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/60"
+                className="absolute top-1/2 right-3 -translate-y-1/2 text-white/40 hover:text-white/60"
               >
-                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                {showPassword ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
               </button>
             </div>
 
@@ -134,7 +142,9 @@ export default function ResetPasswordPage() {
                     req.test(password) ? "text-green-400" : "text-white/40"
                   }`}
                 >
-                  <CheckCircle className={`h-3 w-3 ${req.test(password) ? "opacity-100" : "opacity-30"}`} />
+                  <CheckCircle
+                    className={`h-3 w-3 ${req.test(password) ? "opacity-100" : "opacity-30"}`}
+                  />
                   {req.label}
                 </div>
               ))}
@@ -142,31 +152,44 @@ export default function ResetPasswordPage() {
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="confirm-password" className="block text-sm font-medium">
+            <label
+              htmlFor="confirm-password"
+              className="block text-sm font-medium"
+            >
               Confirm New Password
             </label>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/40" />
+              <Lock className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-white/40" />
               <input
                 id="confirm-password"
                 type={showConfirmPassword ? "text" : "password"}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full rounded-lg border border-white/10 bg-white/5 py-3 pl-10 pr-10 text-sm placeholder:text-white/30 focus:border-white/20 focus:outline-none focus:ring-1 focus:ring-white/20"
+                className="w-full rounded-lg border border-white/10 bg-white/5 py-3 pr-10 pl-10 text-sm placeholder:text-white/30 focus:border-white/20 focus:ring-1 focus:ring-white/20 focus:outline-none"
               />
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/60"
+                className="absolute top-1/2 right-3 -translate-y-1/2 text-white/40 hover:text-white/60"
               >
-                {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                {showConfirmPassword ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
               </button>
             </div>
             {confirmPassword && (
-              <div className={`flex items-center gap-2 text-xs ${doPasswordsMatch ? "text-green-400" : "text-red-400"}`}>
-                <CheckCircle className={`h-3 w-3 ${doPasswordsMatch ? "opacity-100" : "opacity-30"}`} />
-                {doPasswordsMatch ? "Passwords match" : "Passwords do not match"}
+              <div
+                className={`flex items-center gap-2 text-xs ${doPasswordsMatch ? "text-green-400" : "text-red-400"}`}
+              >
+                <CheckCircle
+                  className={`h-3 w-3 ${doPasswordsMatch ? "opacity-100" : "opacity-30"}`}
+                />
+                {doPasswordsMatch
+                  ? "Passwords match"
+                  : "Passwords do not match"}
               </div>
             )}
           </div>

@@ -42,7 +42,9 @@ describe("TMDB API route", () => {
       mockFetchTmdb.mockResolvedValue({ results: [] });
 
       const request = createRequest("popular");
-      await GET(request, { params: Promise.resolve({ segments: ["popular"] }) });
+      await GET(request, {
+        params: Promise.resolve({ segments: ["popular"] }),
+      });
 
       expect(mockFetchTmdb).toHaveBeenCalledWith(
         "movie/popular",
@@ -54,7 +56,9 @@ describe("TMDB API route", () => {
       mockFetchTmdb.mockResolvedValue({ results: [] });
 
       const request = createRequest("upcoming");
-      await GET(request, { params: Promise.resolve({ segments: ["upcoming"] }) });
+      await GET(request, {
+        params: Promise.resolve({ segments: ["upcoming"] }),
+      });
 
       expect(mockFetchTmdb).toHaveBeenCalledWith(
         "movie/upcoming",
@@ -66,7 +70,9 @@ describe("TMDB API route", () => {
       mockFetchTmdb.mockResolvedValue({ results: [] });
 
       const request = createRequest("top-rated");
-      await GET(request, { params: Promise.resolve({ segments: ["top-rated"] }) });
+      await GET(request, {
+        params: Promise.resolve({ segments: ["top-rated"] }),
+      });
 
       expect(mockFetchTmdb).toHaveBeenCalledWith(
         "movie/top_rated",
@@ -78,7 +84,9 @@ describe("TMDB API route", () => {
       mockFetchTmdb.mockResolvedValue({ results: [] });
 
       const request = createRequest("trending");
-      await GET(request, { params: Promise.resolve({ segments: ["trending"] }) });
+      await GET(request, {
+        params: Promise.resolve({ segments: ["trending"] }),
+      });
 
       expect(mockFetchTmdb).toHaveBeenCalledWith(
         "trending/movie/day",
@@ -90,7 +98,9 @@ describe("TMDB API route", () => {
       mockFetchTmdb.mockResolvedValue({ results: [] });
 
       const request = createRequest("trending", { window: "week" });
-      await GET(request, { params: Promise.resolve({ segments: ["trending"] }) });
+      await GET(request, {
+        params: Promise.resolve({ segments: ["trending"] }),
+      });
 
       expect(mockFetchTmdb).toHaveBeenCalledWith(
         "trending/movie/week",
@@ -102,7 +112,9 @@ describe("TMDB API route", () => {
       mockFetchTmdb.mockResolvedValue({ id: 12345 });
 
       const request = createRequest("movie/12345");
-      await GET(request, { params: Promise.resolve({ segments: ["movie", "12345"] }) });
+      await GET(request, {
+        params: Promise.resolve({ segments: ["movie", "12345"] }),
+      });
 
       expect(mockFetchTmdb).toHaveBeenCalledWith(
         "movie/12345",
@@ -114,7 +126,9 @@ describe("TMDB API route", () => {
       mockFetchTmdb.mockResolvedValue({ cast: [] });
 
       const request = createRequest("movie/12345/credits");
-      await GET(request, { params: Promise.resolve({ segments: ["movie", "12345", "credits"] }) });
+      await GET(request, {
+        params: Promise.resolve({ segments: ["movie", "12345", "credits"] }),
+      });
 
       expect(mockFetchTmdb).toHaveBeenCalledWith(
         "movie/12345/credits",
@@ -126,7 +140,9 @@ describe("TMDB API route", () => {
   describe("invalid routes", () => {
     it("should return 400 for empty segments", async () => {
       const request = createRequest("");
-      const response = await GET(request, { params: Promise.resolve({ segments: [] }) });
+      const response = await GET(request, {
+        params: Promise.resolve({ segments: [] }),
+      });
 
       expect(response.status).toBe(400);
       const json = await response.json();
@@ -135,7 +151,9 @@ describe("TMDB API route", () => {
 
     it("should return 400 for unknown route", async () => {
       const request = createRequest("unknown");
-      const response = await GET(request, { params: Promise.resolve({ segments: ["unknown"] }) });
+      const response = await GET(request, {
+        params: Promise.resolve({ segments: ["unknown"] }),
+      });
 
       expect(response.status).toBe(400);
       const json = await response.json();
@@ -144,7 +162,9 @@ describe("TMDB API route", () => {
 
     it("should return 400 for movie with no ID", async () => {
       const request = createRequest("movie");
-      const response = await GET(request, { params: Promise.resolve({ segments: ["movie"] }) });
+      const response = await GET(request, {
+        params: Promise.resolve({ segments: ["movie"] }),
+      });
 
       expect(response.status).toBe(400);
       const json = await response.json();
@@ -157,7 +177,9 @@ describe("TMDB API route", () => {
       mockFetchTmdb.mockResolvedValue({ results: [], page: 2 });
 
       const request = createRequest("popular", { page: "2" });
-      await GET(request, { params: Promise.resolve({ segments: ["popular"] }) });
+      await GET(request, {
+        params: Promise.resolve({ segments: ["popular"] }),
+      });
 
       expect(mockFetchTmdb).toHaveBeenCalledWith(
         "movie/popular",
@@ -171,7 +193,9 @@ describe("TMDB API route", () => {
       mockFetchTmdb.mockResolvedValue({ results: [] });
 
       const request = createRequest("trending", { window: "week", page: "1" });
-      await GET(request, { params: Promise.resolve({ segments: ["trending"] }) });
+      await GET(request, {
+        params: Promise.resolve({ segments: ["trending"] }),
+      });
 
       expect(mockFetchTmdb).toHaveBeenCalledWith(
         "trending/movie/week",
@@ -191,16 +215,22 @@ describe("TMDB API route", () => {
       mockFetchTmdb.mockResolvedValue({ results: [] });
 
       const request = createRequest("popular");
-      const response = await GET(request, { params: Promise.resolve({ segments: ["popular"] }) });
+      const response = await GET(request, {
+        params: Promise.resolve({ segments: ["popular"] }),
+      });
 
-      expect(response.headers.get("Cache-Control")).toBe("public, s-maxage=3600");
+      expect(response.headers.get("Cache-Control")).toBe(
+        "public, s-maxage=3600"
+      );
     });
 
     it("should use force-cache strategy", async () => {
       mockFetchTmdb.mockResolvedValue({ results: [] });
 
       const request = createRequest("popular");
-      await GET(request, { params: Promise.resolve({ segments: ["popular"] }) });
+      await GET(request, {
+        params: Promise.resolve({ segments: ["popular"] }),
+      });
 
       expect(mockFetchTmdb).toHaveBeenCalledWith(
         "movie/popular",
@@ -218,7 +248,9 @@ describe("TMDB API route", () => {
       mockFetchTmdb.mockRejectedValue(new Error("TMDB API failed"));
 
       const request = createRequest("popular");
-      const response = await GET(request, { params: Promise.resolve({ segments: ["popular"] }) });
+      const response = await GET(request, {
+        params: Promise.resolve({ segments: ["popular"] }),
+      });
 
       expect(response.status).toBe(502);
       const json = await response.json();
@@ -229,7 +261,9 @@ describe("TMDB API route", () => {
       mockFetchTmdb.mockRejectedValue("unknown error");
 
       const request = createRequest("popular");
-      const response = await GET(request, { params: Promise.resolve({ segments: ["popular"] }) });
+      const response = await GET(request, {
+        params: Promise.resolve({ segments: ["popular"] }),
+      });
 
       expect(response.status).toBe(502);
       const json = await response.json();
@@ -247,7 +281,9 @@ describe("TMDB API route", () => {
       mockFetchTmdb.mockResolvedValue(mockPayload);
 
       const request = createRequest("popular");
-      const response = await GET(request, { params: Promise.resolve({ segments: ["popular"] }) });
+      const response = await GET(request, {
+        params: Promise.resolve({ segments: ["popular"] }),
+      });
 
       expect(response.status).toBe(200);
       const json = await response.json();

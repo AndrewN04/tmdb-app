@@ -7,7 +7,11 @@ import { notFound } from "next/navigation";
 import { MovieGrid } from "@/components/movie-grid";
 import { SectionHeading } from "@/components/section-heading";
 import { WatchlistPanel } from "@/components/watchlist-panel";
-import { getMovieDetails, getMovieRecommendations, posterUrl } from "@/lib/tmdb";
+import {
+  getMovieDetails,
+  getMovieRecommendations,
+  posterUrl,
+} from "@/lib/tmdb";
 
 interface MoviePageProps {
   params: Promise<{ id: string }>;
@@ -39,35 +43,60 @@ export default async function MoviePage({ params }: MoviePageProps) {
 
   const recommendations = await getMovieRecommendations(id);
   const poster = posterUrl(movie.poster_path, "w500");
-  const backdrop = posterUrl(movie.backdrop_path ?? movie.poster_path, "original");
+  const backdrop = posterUrl(
+    movie.backdrop_path ?? movie.poster_path,
+    "original"
+  );
 
   return (
     <div className="space-y-12">
-      <Link href="/" className="inline-flex items-center gap-2 text-sm text-white/70 hover:text-white">
+      <Link
+        href="/"
+        className="inline-flex items-center gap-2 text-sm text-white/70 hover:text-white"
+      >
         <ArrowLeft className="h-4 w-4" /> Back
       </Link>
 
-      <section className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 min-h-[600px]">
+      <section className="relative min-h-150 overflow-hidden rounded-3xl border border-white/10 bg-white/5">
         {backdrop && (
-          <Image src={backdrop} alt={movie.title ?? "Movie"} fill className="absolute inset-0 h-full w-full object-cover opacity-30" sizes="100vw" priority />
+          <Image
+            src={backdrop}
+            alt={movie.title ?? "Movie"}
+            fill
+            className="absolute inset-0 h-full w-full object-cover opacity-30"
+            sizes="100vw"
+            priority
+          />
         )}
         <div className="relative flex flex-col gap-10 bg-linear-to-r from-black/80 via-black/40 to-transparent px-8 py-10 md:flex-row">
           {poster && (
-            <div className="shrink-0 w-60 md:w-72 lg:w-90 aspect-2/3 relative overflow-hidden rounded-2xl border border-white/10">
-              <Image src={poster} alt={movie.title ?? "Movie poster"} fill className="object-cover" sizes="(max-width: 768px) 240px, (max-width: 1024px) 300px, 360px" priority />
+            <div className="relative aspect-2/3 w-60 shrink-0 overflow-hidden rounded-2xl border border-white/10 md:w-72 lg:w-90">
+              <Image
+                src={poster}
+                alt={movie.title ?? "Movie poster"}
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 240px, (max-width: 1024px) 300px, 360px"
+                priority
+              />
             </div>
           )}
 
           <div className="space-y-6">
             <div className="space-y-3">
-              <h1 className="text-4xl font-bold">{movie.title ?? movie.name}</h1>
-              {movie.tagline && <p className="text-lg text-white/70">{movie.tagline}</p>}
+              <h1 className="text-4xl font-bold">
+                {movie.title ?? movie.name}
+              </h1>
+              {movie.tagline && (
+                <p className="text-lg text-white/70">{movie.tagline}</p>
+              )}
             </div>
             <p className="text-white/80">{movie.overview}</p>
             <div className="flex flex-wrap gap-4 text-sm text-white/80">
               {movie.vote_average && (
                 <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-3 py-1">
-                  <Star className="h-4 w-4 text-yellow-400" /> {movie.vote_average.toFixed(1)}
+                  <Star className="h-4 w-4 text-yellow-400" />{" "}
+                  {movie.vote_average.toFixed(1)}
                 </span>
               )}
               {movie.runtime && (
@@ -95,7 +124,10 @@ export default async function MoviePage({ params }: MoviePageProps) {
 
       {recommendations.results.length > 0 && (
         <section className="space-y-4">
-          <SectionHeading title="Recommended" description="Similar picks pulled from TMDB" />
+          <SectionHeading
+            title="Recommended"
+            description="Similar picks pulled from TMDB"
+          />
           <MovieGrid items={recommendations.results.slice(0, 12)} />
         </section>
       )}
