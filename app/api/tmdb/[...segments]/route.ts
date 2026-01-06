@@ -35,6 +35,15 @@ function mapSegmentsToPath(
       if (rest.length === 0) return null;
       return `movie/${rest.join("/")}`;
     }
+    case "search": {
+      // Support search/multi, search/movie, search/tv
+      if (rest.length === 0) return null;
+      return `search/${rest.join("/")}`;
+    }
+    case "tv": {
+      if (rest.length === 0) return null;
+      return `tv/${rest.join("/")}`;
+    }
     default:
       return null;
   }
