@@ -15,9 +15,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "TMDB Watchlist",
+  title: "TMDB Chart",
   description:
-    "Browse TMDB movies, track your watchlist, and sync with Supabase Auth.",
+    "Browse movies and TV shows, track your watchlist, and discover new favorites.",
 };
 
 export default function RootLayout({

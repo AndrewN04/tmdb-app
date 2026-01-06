@@ -216,7 +216,7 @@ export default function SignInPage() {
           // Sign In View
           <>
             <div className="text-center">
-              <h1 className="text-2xl font-bold">Sign in to TMDB Watchlist</h1>
+              <h1 className="text-2xl font-bold">Sign in to TMDB Chart</h1>
               <p className="mt-2 text-sm text-white/60">
                 Track your favorite movies and build your watchlist
               </p>

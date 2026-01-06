@@ -4,13 +4,14 @@ import { ArrowLeft, Clock, Star } from "lucide-react";
 
 import { notFound } from "next/navigation";
 
-import { MovieGrid } from "@/components/movie-grid";
+import { MediaGrid } from "@/components/media-grid";
 import { SectionHeading } from "@/components/section-heading";
 import { WatchlistPanel } from "@/components/watchlist-panel";
 import {
   getMovieDetails,
   getMovieRecommendations,
   posterUrl,
+  formatRuntime,
 } from "@/lib/tmdb";
 
 interface MoviePageProps {
@@ -18,13 +19,6 @@ interface MoviePageProps {
 }
 
 export const dynamic = "force-dynamic";
-
-function formatRuntime(runtime?: number) {
-  if (!runtime) return null;
-  const hours = Math.floor(runtime / 60);
-  const minutes = runtime % 60;
-  return `${hours}h ${minutes}m`;
-}
 
 export default async function MoviePage({ params }: MoviePageProps) {
   const { id } = await params;
@@ -128,7 +122,10 @@ export default async function MoviePage({ params }: MoviePageProps) {
             title="Recommended"
             description="Similar picks pulled from TMDB"
           />
-          <MovieGrid items={recommendations.results.slice(0, 12)} />
+          <MediaGrid
+            items={recommendations.results.slice(0, 12)}
+            mediaType="movie"
+          />
         </section>
       )}
     </div>

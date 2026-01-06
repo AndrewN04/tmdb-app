@@ -51,7 +51,7 @@ export function AuthButton() {
     return (
       <Link
         href="/sign-in"
-        className="rounded-full bg-linear-to-r from-blue-600 to-purple-600 px-6 py-2 text-sm font-medium text-white transition-all hover:from-blue-500 hover:to-purple-500 hover:shadow-lg hover:shadow-blue-500/25"
+        className="rounded-full bg-linear-to-r from-emerald-600 to-teal-600 px-6 py-2 text-sm font-medium text-white transition-all hover:from-emerald-500 hover:to-teal-500 hover:shadow-lg hover:shadow-emerald-500/25"
       >
         Sign In
       </Link>

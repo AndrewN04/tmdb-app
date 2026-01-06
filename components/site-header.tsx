@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Search, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { AuthButton } from "@/components/auth-button";
+import { SearchBar } from "@/components/search-bar";
 
 export function SiteHeader() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -21,11 +22,8 @@ export function SiteHeader() {
 
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 font-bold text-white">
-            T
-          </div>
-          <span className="hidden text-lg font-bold tracking-tight text-white sm:inline-block">
-            TMDB Stylistic
+          <span className="text-lg font-bold tracking-tight text-white">
+            TMDB Chart
           </span>
         </Link>
 
@@ -37,21 +35,11 @@ export function SiteHeader() {
           <Link href="/tv" className="transition-colors hover:text-white">
             TV Shows
           </Link>
-          <Link href="/people" className="transition-colors hover:text-white">
-            People
-          </Link>
         </nav>
 
         {/* Search & Actions */}
         <div className="flex flex-1 items-center justify-end gap-4">
-          <div className="relative hidden w-full max-w-md sm:block">
-            <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-white/40" />
-            <input
-              type="search"
-              placeholder="Search movies, TV shows..."
-              className="h-9 w-full rounded-full border border-white/10 bg-white/5 pr-4 pl-10 text-sm text-white placeholder:text-white/40 focus:border-blue-500 focus:bg-white/10 focus:ring-0 focus:outline-none"
-            />
-          </div>
+          <SearchBar />
 
           <AuthButton />
         </div>
@@ -61,6 +49,13 @@ export function SiteHeader() {
       {isMobileMenuOpen && (
         <div className="border-t border-white/10 bg-slate-950 px-6 py-4 md:hidden">
           <nav className="flex flex-col gap-4 text-sm font-medium text-white/80">
+            <Link
+              href="/search"
+              className="transition-colors hover:text-white"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Search
+            </Link>
             <Link
               href="/movies"
               className="transition-colors hover:text-white"
@@ -74,13 +69,6 @@ export function SiteHeader() {
               onClick={() => setIsMobileMenuOpen(false)}
             >
               TV Shows
-            </Link>
-            <Link
-              href="/people"
-              className="transition-colors hover:text-white"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              People
             </Link>
           </nav>
         </div>

@@ -86,7 +86,7 @@ export default function SignUpPage() {
           <div className="pt-4">
             <Link
               href="/sign-in"
-              className="text-sm text-blue-400 hover:text-blue-300"
+              className="text-sm text-emerald-400 hover:text-emerald-300"
             >
               Back to sign in
             </Link>

@@ -1,4 +1,4 @@
-# TMDB Watchlist – Architecture Deep Dive
+# TMDB Chart – Architecture Deep Dive
 
 This document provides an in-depth walkthrough of every major file and function in the codebase. It's written as though you're presenting the project during a technical interview—covering intent, design decisions, and how the pieces fit together.
 
@@ -25,7 +25,7 @@ This document provides an in-depth walkthrough of every major file and function 
 
 ## Project Overview
 
-**TMDB Watchlist** is a movie and TV show discovery application that:
+**TMDB Chart** is a movie and TV show discovery application that:
 
 - Fetches live movie and TV show data from The Movie Database (TMDB) API.
 - Provides search functionality across movies and TV shows with filtering options.
@@ -73,14 +73,19 @@ tmdb/
 │   ├── page.tsx
 │   └── globals.css
 ├── components/
-│   ├── movie-card.tsx
-│   ├── movie-grid.tsx
+│   ├── auth-button.tsx
+│   ├── content-section.tsx
+│   ├── filter-sidebar.tsx
+│   ├── hero-section.tsx
+│   ├── load-more-button.tsx
+│   ├── media-card.tsx
+│   ├── media-grid.tsx
+│   ├── media-row.tsx
 │   ├── section-heading.tsx
 │   ├── watchlist-panel.tsx
 │   └── ui/
 │       └── badge.tsx
 ├── lib/
-│   ├── http.ts
 │   ├── prisma.ts
 │   ├── utils.ts
 │   ├── watchlist.ts
@@ -474,17 +479,14 @@ export async function discoverTV(filters: SearchFilters = {}) {
 
 #### Utility Functions
 
-| Function                       | Purpose                                                 |
-| ------------------------------ | ------------------------------------------------------- |
-| `getTitle(media)`              | Returns `title` or `name` depending on media type.      |
-| `formatYear(media)`            | Extracts year from `release_date` or `first_air_date`.  |
-| `formatDate(media, locale)`    | Formats release/air date for display.                   |
-| `formatRuntime(minutes)`       | Converts minutes to "2h 15m" format.                    |
-| `ratingToPercent(voteAverage)` | Converts 0-10 rating to percentage (e.g., 8.4 → 84).    |
-| `posterUrl(path, size)`        | Constructs full TMDB poster image URL.                  |
-| `backdropUrl(path, size)`      | Constructs full TMDB backdrop image URL.                |
-| `profileUrl(path, size)`       | Constructs full TMDB profile image URL (for cast/crew). |
-| `getMediaType(media)`          | Infers "movie" or "tv" from object properties.          |
+| Function                  | Purpose                                                |
+| ------------------------- | ------------------------------------------------------ |
+| `getTitle(media)`         | Returns `title` or `name` depending on media type.     |
+| `formatYear(media)`       | Extracts year from `release_date` or `first_air_date`. |
+| `formatRuntime(minutes)`  | Converts minutes to "2h 15m" format.                   |
+| `posterUrl(path, size)`   | Constructs full TMDB poster image URL.                 |
+| `backdropUrl(path, size)` | Constructs full TMDB backdrop image URL.               |
+| `getMediaType(media)`     | Infers "movie" or "tv" from object properties.         |
 
 ---
 
@@ -690,18 +692,65 @@ export default async function MoviePage({ params }: MoviePageProps) {
 
 ## Components
 
-### `components/movie-card.tsx`
+### `components/site-header.tsx`
 
-Renders a single movie poster card with:
+Global navigation bar containing:
 
-- Poster image (lazy-loaded, hover scale effect).
-- Star rating badge overlay.
-- Title, year, and optional media type badge.
-- Links to `/movie/[id]`.
+- Logo and branding.
+- Navigation links (Movies, TV Shows).
+- Search bar input.
+- `<AuthButton>` for user session management.
+- Responsive mobile menu toggle.
 
-### `components/movie-grid.tsx`
+### `components/site-footer.tsx`
 
-Responsive CSS grid wrapper that maps an array of `MovieSummary` to `<MovieCard>` instances. Supports `priorityCount` for LCP optimization.
+Global footer displaying the tech stack and TMDB attribution.
+
+### `components/auth-button.tsx`
+
+**Client Component** that manages user session state:
+
+- Subscribes to Supabase auth changes.
+- Displays "Sign In" button for guests.
+- Displays user avatar and dropdown menu (Profile, Sign Out) for authenticated users.
+
+### `components/media-card.tsx`
+
+Renders a single media card (movie or TV) with:
+
+- Poster image with hover zoom effect.
+- Star rating badge overlay (top-right).
+- Optional release date badge (for "Coming Soon" sections).
+- Title, genres (limited to 2), or year fallback.
+- Links to `/movie/[id]` or `/tv/[id]` based on media type.
+
+### `components/media-grid.tsx`
+
+Responsive CSS grid that renders `<MediaCard>` instances. Displays empty state when no results. Accepts optional genres for displaying genre names.
+
+### `components/media-row.tsx`
+
+Horizontal scrolling row of `<MediaCard>` items with overflow scroll styling.
+
+### `components/hero-section.tsx`
+
+Full-width hero banner featuring backdrop image, rating badge, genre tags, title, overview, and call-to-action buttons.
+
+### `components/content-section.tsx`
+
+Wrapper component for content sections with title, optional "View All" link, and children slot.
+
+### `components/filter-sidebar.tsx`
+
+**Client Component** for browse page filtering with sort dropdown, genre chips, date range inputs, and reset button. Uses URL search params for filter state.
+
+### `components/load-more-button.tsx`
+
+Pagination button for "Load More" functionality, preserving current filter params.
+
+### `components/trending-toggle.tsx`
+
+Day/Week toggle buttons for trending content selection.
 
 ### `components/section-heading.tsx`
 
@@ -738,20 +787,6 @@ export function cn(...inputs: ClassValue[]) {
 ```
 
 Standard pattern for merging Tailwind classes without conflicts.
-
-### `lib/http.ts`
-
-```typescript
-export function getBaseUrl() {
-  if (typeof window !== "undefined") return window.location.origin;
-  if (process.env.NEXT_PUBLIC_APP_URL)
-    return process.env.NEXT_PUBLIC_APP_URL.replace(/\/$/, "");
-  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
-  return "http://localhost:3000";
-}
-```
-
-Resolves the application's base URL in any environment (browser, server, Vercel).
 
 ### `lib/watchlist.ts`
 

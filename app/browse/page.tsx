@@ -1,19 +1,23 @@
 import { SectionHeading } from "@/components/section-heading";
-import { MovieGrid } from "@/components/movie-grid";
+import { MediaGrid } from "@/components/media-grid";
 import {
   getPopularMovies,
   getTopRatedMovies,
   getTrendingMovies,
+  getMovieGenres,
 } from "@/lib/tmdb";
 
 export const revalidate = 300;
 
 export default async function BrowsePage() {
-  const [popular, topRated, trending] = await Promise.all([
+  const [popular, topRated, trending, genresData] = await Promise.all([
     getPopularMovies(),
     getTopRatedMovies(),
     getTrendingMovies("week"),
+    getMovieGenres(),
   ]);
+
+  const genres = genresData.genres;
 
   return (
     <div className="space-y-12">
@@ -30,17 +34,29 @@ export default async function BrowsePage() {
 
       <section className="space-y-4">
         <SectionHeading title="Trending this week" />
-        <MovieGrid items={trending.results.slice(0, 12)} />
+        <MediaGrid
+          items={trending.results.slice(0, 12)}
+          genres={genres}
+          mediaType="movie"
+        />
       </section>
 
       <section className="space-y-4">
         <SectionHeading title="Popular" />
-        <MovieGrid items={popular.results.slice(0, 12)} />
+        <MediaGrid
+          items={popular.results.slice(0, 12)}
+          genres={genres}
+          mediaType="movie"
+        />
       </section>
 
       <section className="space-y-4">
         <SectionHeading title="Top rated" />
-        <MovieGrid items={topRated.results.slice(0, 12)} />
+        <MediaGrid
+          items={topRated.results.slice(0, 12)}
+          genres={genres}
+          mediaType="movie"
+        />
       </section>
     </div>
   );

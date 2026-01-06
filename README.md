@@ -1,11 +1,12 @@
 ## Project Goal
 
-TMDB Watchlist is a TMDB-powered movie discovery site that lets users browse trending titles and maintain a Supabase-backed watchlist (notes, favorites, categories) through Prisma.
+TMDB Chart is a TMDB-powered movie discovery site that lets users browse trending titles and maintain a Supabase-backed watchlist (notes, favorites, categories) through Prisma.
 
 ## Creation & Stack
 
-- **Next.js 16 App Router** for UI, Edge route handlers, and ISR caching.
-- **Supabase Auth + Postgres** with Prisma 7 for persistence.
+- **Next.js 16.1 (App Router)** for UI, Edge route handlers, and ISR caching.
+- **React 19** for Server Components and Actions.
+- **Supabase Auth + Postgres** with **Prisma 7** for persistence.
 - **TMDB API proxy** (`app/api/tmdb/[...segments]/route.ts`) handles API keys and caching.
 - **Tailwind CSS + lucide-react** for styling and icons.
 

@@ -4,7 +4,13 @@
  * @vitest-environment jsdom
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import {
+  render,
+  screen,
+  fireEvent,
+  waitFor,
+  act,
+} from "@testing-library/react";
 import { AuthButton } from "@/components/auth-button";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
 
@@ -248,8 +254,10 @@ describe("AuthButton", () => {
         expect(screen.getByText("Sign In")).toBeInTheDocument();
       });
 
-      // Simulate auth state change
-      authCallback!("SIGNED_IN", { user: mockUser as SupabaseUser });
+      // Simulate auth state change - wrap in act() to handle state update
+      await act(async () => {
+        authCallback!("SIGNED_IN", { user: mockUser as SupabaseUser });
+      });
 
       await waitFor(() => {
         expect(screen.queryByText("Sign In")).not.toBeInTheDocument();

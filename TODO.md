@@ -1,4 +1,4 @@
-# TMDB Watchlist – Project TODO
+# TMDB Chart – Project TODO
 
 ## Completed
 
@@ -18,7 +18,7 @@
 
 ---
 
-## 🎨 Major Redesign Project (Dec 2024)
+## 🎨 Major Redesign Project (Dec)
 
 ### Overview
 
@@ -66,30 +66,30 @@ Complete UI overhaul to match new design system, expand from movies-only to incl
 
 ### Phase 3: Home Page Redesign
 
-- [ ] **New hero section**
-  - Large backdrop image with gradient overlay
-  - Genre badges (e.g., "SCI-FI"), Year, Rating badge
-  - Large gradient title text
-  - Movie/show description
-  - "Watch Trailer" and "More Info" buttons
+- [x] **New hero section**
+  - [x] Large backdrop image with gradient overlay
+  - [x] Genre badges (e.g., "SCI-FI"), Year, Rating badge
+  - [x] Large gradient title text
+  - [x] Movie/show description
+  - [x] "Watch Trailer" and "More Info" buttons
 
-- [ ] **Redesigned content sections**
-  - "Trending Now" with horizontal scroll
-  - "What's Popular" section
-  - "Coming Soon" with release date badges
-  - Section headers with "View All" links
-  - Purple accent bar on section titles
+- [x] **Redesigned content sections**
+  - [x] "Trending Now" with horizontal scroll
+  - [x] "What's Popular" section
+  - [x] "Coming Soon" with release date badges
+  - [x] Section headers with "View All" links
+  - [x] Purple accent bar on section titles
 
-- [ ] **Updated media cards**
-  - Rating badge overlay (top-right)
-  - Title and genre tags below poster
-  - Hover effects and transitions
+- [x] **Updated media cards**
+  - [x] Rating badge overlay (top-right)
+  - [x] Title and genre tags below poster
+  - [x] Hover effects and transitions
 
 ---
 
-### Phase 4: Browse Pages with Filters
+### Phase 4: Browse Pages with Filters ✅ COMPLETE
 
-- [ ] **Create Movies browse page (`/movies`)**
+- [x] **Create Movies browse page (`/movies`)**
   - Left sidebar with filters
   - Sort dropdown (Popularity, Rating, Release Date)
   - Genre filter chips (multi-select)
@@ -98,31 +98,30 @@ Complete UI overhaul to match new design system, expand from movies-only to incl
   - Grid of movie cards with ratings
   - "Load More" pagination button
 
-- [ ] **Create TV Shows browse page (`/tv`)**
+- [x] **Create TV Shows browse page (`/tv`)**
   - Same filter sidebar pattern
   - TV-specific genres
   - Air date filters
   - Grid of TV show cards
 
-- [ ] **Trending toggle component**
+- [x] **Trending toggle component**
   - "Today" / "This Week" toggle buttons
   - Updates content dynamically
 
 ---
 
-### Phase 5: Search Functionality
+### Phase 5: Search Functionality ✅ COMPLETE
 
-- [ ] **Global search component**
+- [x] **Global search component**
   - Search input in header
   - Dropdown with instant results
   - Categories: Movies, TV Shows
   - "View all results" link
 
-- [ ] **Search results page (`/search`)**
+- [x] **Search results page (`/search`)**
   - Query parameter handling
   - Tabbed results (All, Movies, TV Shows)
-  - Filter sidebar for refining results
-  - Pagination
+  - Pagination with Load More button
 
 ---
 

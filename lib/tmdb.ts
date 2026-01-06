@@ -331,17 +331,6 @@ export function formatYear(media: MediaSummary) {
   return new Date(raw).getFullYear().toString();
 }
 
-/** Get full release/air date formatted */
-export function formatDate(media: MediaSummary, locale = "en-US") {
-  const raw = media.release_date ?? media.first_air_date;
-  if (!raw) return "";
-  return new Date(raw).toLocaleDateString(locale, {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-}
-
 /** Get runtime display (e.g., "2h 46m") */
 export function formatRuntime(minutes?: number) {
   if (!minutes) return "";
@@ -350,11 +339,6 @@ export function formatRuntime(minutes?: number) {
   if (hours === 0) return `${mins}m`;
   if (mins === 0) return `${hours}h`;
   return `${hours}h ${mins}m`;
-}
-
-/** Get rating as percentage (e.g., 8.4 → 84) */
-export function ratingToPercent(voteAverage: number) {
-  return Math.round(voteAverage * 10);
 }
 
 /** Get poster URL with size variant */
@@ -370,15 +354,6 @@ export function posterUrl(
 export function backdropUrl(
   path: string | null,
   size: "w300" | "w780" | "w1280" | "original" = "w1280"
-) {
-  if (!path) return null;
-  return `${TMDB_IMAGE_BASE}/${size}${path}`;
-}
-
-/** Get profile image URL (for cast/crew) */
-export function profileUrl(
-  path: string | null,
-  size: "w45" | "w185" | "h632" | "original" = "w185"
 ) {
   if (!path) return null;
   return `${TMDB_IMAGE_BASE}/${size}${path}`;
